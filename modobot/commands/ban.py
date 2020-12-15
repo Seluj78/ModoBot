@@ -4,6 +4,7 @@ from modobot import modobot_client
 from modobot.models.userban import UserBan
 from modobot.utils.errors import UserAlreadyBannedError
 from modobot.utils.errors import UserNotBannedError
+from datetime import datetime
 
 
 @modobot_client.command()
@@ -44,6 +45,7 @@ async def unban(ctx, *, member_id: str):
         if str(ban_entry.user.id) == str(member_id):
             await ctx.guild.unban(ban_entry.user)
             banned_user.is_unbanned = True
+            banned_user.dt_unbanned = datetime.utcnow()
             banned_user.save()
             await ctx.message.delete()
             await ctx.send(f"{ctx.author.id} unbanned {member_id}")
