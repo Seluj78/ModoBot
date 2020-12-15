@@ -1,4 +1,5 @@
 from discord.ext import commands
+import logging
 
 from modobot import modobot_client
 from modobot.utils.embeds import send_error_embed
@@ -44,6 +45,8 @@ async def on_command_error(ctx, error):
         await send_error_embed(ctx, str(error), "Someone was first.")
     elif isinstance(error, UnauthorizedError):
         await send_error_embed(ctx, str(error), "You don't have the permissions.")
+    elif isinstance(error, commands.CheckFailure):
+        logging.error(f"Check failed: {error}")
     else:
         logging.error(f"Unknow error {error}")
         await send_error_embed(ctx, f"Unknow error: {error}", "Try again")

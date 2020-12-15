@@ -8,6 +8,12 @@ from modobot.utils.errors import UserNotBannedError
 
 @modobot_client.command()
 async def ban(ctx, member: discord.Member, *, reason: str):
+
+    if not member or member == ctx.message.author:
+        await ctx.message.delete()
+        await ctx.message.author.send("You cannot ban yourself")
+        return
+
     if UserBan.get_or_none(banned_id=member.id):
         raise UserAlreadyBannedError(f"User {str(member)} is already banned")
 

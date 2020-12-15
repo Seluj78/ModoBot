@@ -50,22 +50,11 @@ async def on_ready():
     logging.info("We have logged in as {0.user}".format(modobot_client))
 
 
-from modobot.utils.errors import UnauthorizedError
-
-
-@modobot_client.before_invoke
-async def before_invoke_check(ctx):
-    allowed_roles = [788149895726628875]
-    role_ids = [role.id for role in ctx.author.roles]
-    for role in role_ids:
-        if role in allowed_roles:
-            return
-    raise UnauthorizedError("You cannot do this")
-
-
 from modobot.models.userban import UserBan
 
 if not UserBan.table_exists():
     UserBan.create_table()
 
+
+import modobot.utils.checks
 import modobot.commands.ban
