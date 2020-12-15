@@ -14,28 +14,34 @@ async def permissions_check(ctx):
         await ctx.message.delete()
         raise UnauthorizedError("You're not allowed to use this command")
     if ctx.command.name == "ban" and not roleperms.can_ban:
-        await ctx.message.delete()
-        await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
+        if not roleperms.silence_notif:
+            await ctx.message.delete()
+            await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
         raise UnauthorizedError(f"You're not allowed to use `{ctx.command.name}`")
     elif ctx.command.name == "unban" and not roleperms.can_unban:
-        await ctx.message.delete()
-        await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
+        if not roleperms.silence_notif:
+            await ctx.message.delete()
+            await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
         raise UnauthorizedError(f"You're not allowed to use `{ctx.command.name}`")
     elif ctx.command.name == "warn" and not roleperms.can_warn:
-        await ctx.message.delete()
-        await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
+        if not roleperms.silence_notif:
+            await ctx.message.delete()
+            await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
         raise UnauthorizedError(f"You're not allowed to use `{ctx.command.name}`")
     elif ctx.command.name == "note" and not roleperms.can_note:
-        await ctx.message.delete()
-        await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
+        if not roleperms.silence_notif:
+            await ctx.message.delete()
+            await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
         raise UnauthorizedError(f"You're not allowed to use `{ctx.command.name}`")
-    elif ctx.command.name == "search" and not roleperms.search:
-        await ctx.message.delete()
-        await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
+    elif ctx.command.name == "search" and not roleperms.can_search:
+        if not roleperms.silence_notif:
+            await ctx.message.delete()
+            await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
         raise UnauthorizedError(f"You're not allowed to use `{ctx.command.name}`")
     elif ctx.command.name == "clear" and not roleperms.can_clear:
-        await ctx.message.delete()
-        await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
+        if not roleperms.silence_notif:
+            await ctx.message.delete()
+            await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
         raise UnauthorizedError(f"You're not allowed to use `{ctx.command.name}`")
     else:
         return True

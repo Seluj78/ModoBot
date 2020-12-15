@@ -10,3 +10,4 @@ DB_NAME = os.getenv("DB_NAME")
 ROOT_PATH = os.path.join(os.path.dirname(__file__), "../")
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
+SERVER_NAME = os.getenv("SERVER_NAME")

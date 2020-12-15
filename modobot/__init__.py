@@ -19,6 +19,7 @@ REQUIRED_ENV_VARS = [
     "DB_PASSWORD",
     "DB_NAME",
     "BOT_TOKEN",
+    "SERVER_NAME",
 ]
 
 for item in REQUIRED_ENV_VARS:
@@ -27,7 +28,14 @@ for item in REQUIRED_ENV_VARS:
             f"{item} is not set in the server's environment or .env file. It is required."
         )
 
-from modobot.static import DB_NAME, DB_USER, DB_PASSWORD, DB_PORT, DB_HOST  # noqa
+from modobot.static import (
+    DB_NAME,
+    DB_USER,
+    DB_PASSWORD,
+    DB_PORT,
+    DB_HOST,
+    SERVER_NAME,
+)  # noqa
 
 setup_logging()
 
@@ -42,6 +50,14 @@ modo_db = peewee.MySQLDatabase(
 @modobot_client.event
 async def on_ready():
     logging.info("We have logged in as {0.user}".format(modobot_client))
+    from modobot.models.roleperms import RolePerms
+
+    logging.info("Setting all roles")
+    for guild in modobot_client.guilds:
+        if guild.name == SERVER_NAME:
+            for role in guild.roles:
+                RolePerms.create(name=role.name)
+    logging.info("All roles created")
 
 
 from modobot.models.userban import UserBan
@@ -60,6 +76,7 @@ if not ActionLog.table_exists():
     ActionLog.create_table()
 if not RolePerms.table_exists():
     RolePerms.create_table()
+
 
 import modobot.utils.checks  # noqa
 import modobot.commands.ban  # noqa
