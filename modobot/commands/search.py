@@ -1,4 +1,5 @@
 import discord
+
 from modobot import modobot_client
 from modobot.models.actionlog import ActionLog
 from modobot.models.userban import UserBan
@@ -8,9 +9,7 @@ from modobot.models.userwarn import UserWarn
 
 @modobot_client.command(brief="Search for user in all DBs")
 async def search(ctx, member: discord.Member):
-    ActionLog.create(
-        moderator_id=ctx.author.id, action="search", comments=member.id
-    )
+    ActionLog.create(moderator_id=ctx.author.id, action="search", comments=member.id)
     notes = UserNote.select().where(UserNote.noted_id == member.id)
     warns = UserWarn.select().where(UserWarn.warned_id == member.id)
     bans = UserBan.select().where(UserBan.banned_id == member.id)

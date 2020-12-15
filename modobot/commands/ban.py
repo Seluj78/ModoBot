@@ -14,27 +14,37 @@ async def ban(ctx, member: discord.Member, *, reason: str):
 
     if not member or member == ctx.message.author:
         await ctx.message.delete()
-        await ctx.message.author.send("You cannot ban yourself")
+        embed = discord.Embed(
+            description="You cannot ban yourself.", color=discord.Color.dark_orange()
+        )
+        await ctx.author.send(embed=embed)
         return
-
     if UserBan.get_or_none(banned_id=member.id, is_unbanned=False):
         raise UserAlreadyBannedError(f"User {str(member)} is already banned")
 
     embed = discord.Embed(
-        title="Modobot notification",
-        description=f"You were banned from {ctx.guild.name}",
+        description=f"You were banned from `{ctx.guild.name}`.",
         color=discord.Color.red(),
     )
-    embed.add_field(name="Reason", value=reason, inline=True)
+    embed.add_field(name="Reason", value=reason)
     await member.send(embed=embed)
 
     await member.ban(reason=reason)
-    await ctx.message.delete()
-    await ctx.send(f"{ctx.author.id} banned {member.id} for {reason}")
     UserBan.create(banned_id=member.id, moderator_id=ctx.author.id, reason=reason)
     ActionLog.create(
         moderator_id=ctx.author.id, user_id=member.id, action="ban", comments=reason
     )
+
+    await ctx.message.delete()
+    embed = discord.Embed(
+        description=f"`{str(member)}` (`{member.id}`) was banned.",
+        color=discord.Color.red(),
+    )
+    embed.add_field(name="Reason", value=f"`{reason}`.")
+    embed.set_footer(
+        text=f"From command `{ctx.command.name}` sent by {str(ctx.author.name)} in #{ctx.channel.name}"
+    )
+    await ctx.channel.send(embed=embed)
 
 
 @modobot_client.command(brief="Unbans a member")
@@ -50,10 +60,18 @@ async def unban(ctx, *, member_id: str):
             banned_user.is_unbanned = True
             banned_user.dt_unbanned = datetime.utcnow()
             banned_user.save()
-            await ctx.message.delete()
-            await ctx.send(f"{ctx.author.id} unbanned {member_id}")
             ActionLog.create(
                 moderator_id=ctx.author.id, user_id=member_id, action="unban"
             )
+
+            await ctx.message.delete()
+            embed = discord.Embed(
+                description=f"`{member_id}` was unbanned.",
+                color=discord.Color.dark_gold(),
+            )
+            embed.set_footer(
+                text=f"From command `{ctx.command.name}` sent by {str(ctx.author.name)} in #{ctx.channel.name}"
+            )
+            await ctx.channel.send(embed=embed)
             return
     raise UserNotBannedError(f"User {member_id} is not banned.")
