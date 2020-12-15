@@ -29,3 +29,5 @@ TODO:
 - [ ] Only resp staff and above can warn/ban moderators
 - [ ] Add lots of logging
 - [ ] Allow clear to be used everywhere
+- [ ] custom commands for channels (`!salon`)
+- [ ] Cannot ban user above you
