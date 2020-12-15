@@ -4,6 +4,7 @@ import os
 import peewee
 from discord.ext import commands
 from dotenv import load_dotenv
+from peewee import IntegrityError
 from pretty_help import PrettyHelp
 
 from modobot.utils.logging import setup_logging
@@ -56,7 +57,10 @@ async def on_ready():
     for guild in modobot_client.guilds:
         if guild.name == SERVER_NAME:
             for role in guild.roles:
-                RolePerms.create(name=role.name)
+                try:
+                    RolePerms.create(name=role.name)
+                except IntegrityError:
+                    pass
     logging.info("All roles created")
 
 
