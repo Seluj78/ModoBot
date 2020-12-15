@@ -18,8 +18,9 @@ async def channel_check(ctx):
     allowed_channels = ["commandes"]
     if ctx.message.channel.name not in allowed_channels:
         await ctx.message.delete()
-        await ctx.author.send(f"The command `{ctx.command.name}` cannot be used in `{ctx.message.channel.name}`")
+        await ctx.author.send(
+            f"The command `{ctx.command.name}` cannot be used in `{ctx.message.channel.name}`"
+        )
         return False
     else:
         return True
-

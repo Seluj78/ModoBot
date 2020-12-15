@@ -4,7 +4,7 @@ from modobot import modobot_client
 from modobot.models.userwarn import UserWarn
 
 
-@modobot_client.command()
+@modobot_client.command(brief="Warns a member with given reason")
 async def warn(ctx, member: discord.Member, *, reason: str):
 
     if not member or member == ctx.message.author:

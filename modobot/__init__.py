@@ -6,7 +6,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 
 from modobot.utils.logging import setup_logging
-
+from pretty_help import PrettyHelp
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")  # refers to application_top
 dotenv_path = os.path.join(ROOT, ".env")
@@ -38,7 +38,8 @@ from modobot.static import (
 
 setup_logging()
 
-modobot_client = commands.Bot(command_prefix="?")
+modobot_client = commands.Bot(command_prefix="?", help_command=PrettyHelp())
+
 
 modo_db = peewee.MySQLDatabase(
     database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT

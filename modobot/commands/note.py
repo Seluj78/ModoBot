@@ -4,7 +4,7 @@ from modobot import modobot_client
 from modobot.models.usernote import UserNote
 
 
-@modobot_client.command()
+@modobot_client.command(brief="Adds a note on user only visible to moderators")
 async def note(ctx, member: discord.Member, *, reason: str):
 
     if not member or member == ctx.message.author:

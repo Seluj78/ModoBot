@@ -7,7 +7,7 @@ from modobot.utils.errors import UserNotBannedError
 from datetime import datetime
 
 
-@modobot_client.command()
+@modobot_client.command(brief="Bans a member with the given reason")
 async def ban(ctx, member: discord.Member, *, reason: str):
 
     if not member or member == ctx.message.author:
@@ -34,7 +34,7 @@ async def ban(ctx, member: discord.Member, *, reason: str):
     ).save()
 
 
-@modobot_client.command()
+@modobot_client.command(brief="Unbans a member")
 async def unban(ctx, *, member_id: str):
     banned_user = UserBan.get_or_none(banned_id=member_id, is_unbanned=False)
     if not banned_user:

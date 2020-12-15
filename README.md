@@ -13,9 +13,11 @@ TODO:
 - [ ] `warnings`
 - [ ] `delnote`
 - [ ] `delwarn`
+- [x] Pretty help page
 - [ ] An appeal system where when a user is banned, he can appeal to ask to be redeemed for his ban
 - [ ] Relational db to link actions to moderators
 - [ ] Finer permissions and role handling
 - [ ] pretty embeds for all messages
 - [ ] Add reports for unauthorized use of command
 - [ ] Add action logs (log what action a moderator takes)
+- [ ] Move commands to COGS
