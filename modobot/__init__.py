@@ -58,3 +58,4 @@ if not UserBan.table_exists():
 
 import modobot.utils.checks
 import modobot.commands.ban
+import modobot.commands.clear

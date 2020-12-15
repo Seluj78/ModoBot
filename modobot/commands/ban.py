@@ -14,7 +14,7 @@ async def ban(ctx, member: discord.Member, *, reason: str):
         await ctx.message.author.send("You cannot ban yourself")
         return
 
-    if UserBan.get_or_none(banned_id=member.id):
+    if UserBan.get_or_none(banned_id=member.id, is_unbanned=False):
         raise UserAlreadyBannedError(f"User {str(member)} is already banned")
 
     embed = discord.Embed(
@@ -35,7 +35,7 @@ async def ban(ctx, member: discord.Member, *, reason: str):
 
 @modobot_client.command()
 async def unban(ctx, *, member_id: str):
-    banned_user = UserBan.get_or_none(banned_id=member_id)
+    banned_user = UserBan.get_or_none(banned_id=member_id, is_unbanned=False)
     if not banned_user:
         raise UserNotBannedError(f"User {member_id} is not banned.")
 
@@ -43,7 +43,8 @@ async def unban(ctx, *, member_id: str):
     for ban_entry in banned_users:
         if str(ban_entry.user.id) == str(member_id):
             await ctx.guild.unban(ban_entry.user)
-            banned_user.delete_instance()
+            banned_user.is_unbanned = True
+            banned_user.save()
             await ctx.message.delete()
             await ctx.send(f"{ctx.author.id} unbanned {member_id}")
             return
