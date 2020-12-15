@@ -70,3 +70,4 @@ import modobot.commands.ban
 import modobot.commands.clear
 import modobot.commands.warn
 import modobot.commands.note
+import modobot.commands.search

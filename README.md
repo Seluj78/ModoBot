@@ -11,7 +11,7 @@ TODO:
 - [ ] `unmute` Unmutes a user
 - [ ] `delnote` Deletes a note
 - [ ] `delwarn` Deletes a warning
-- [ ] `search` Gets all info in db of passed user id (bans, notes, warnings, mutes)
+- [x] `search` Gets all info in db of passed user id (bans, notes, warnings, mutes)
 - [ ] `info` Get info on the accounts (created, joined etc)
 - [ ] `aban` Ask for ban (modotests)
 - [ ] `aunban` Ask for unban (< resp staff)
@@ -25,4 +25,5 @@ TODO:
 - [ ] Move commands to COGS
 - [ ] Add a admin interface on flask
 - [ ] DB for managing roles and permissions
-- [ ] Only resp staff and above can warn moderators
+- [ ] Only resp staff and above can warn/ban moderators
+- [ ] Add lots of logging

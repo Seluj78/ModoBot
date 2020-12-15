@@ -6,6 +6,7 @@ ROLE_MATRIX = {
         # "unmute": True,
         "warn": True,
         "note": True,
+        "search": True,
         "clear": False,
     },
     "Modérateur": {
@@ -15,6 +16,7 @@ ROLE_MATRIX = {
         # "unmute": True,
         "warn": True,
         "note": True,
+        "search": True,
         "clear": False,
     },
     "Modérateur +": {
@@ -24,6 +26,7 @@ ROLE_MATRIX = {
         # "unmute": True,
         "warn": True,
         "note": True,
+        "search": True,
         "clear": False,
     },
     "Responsable Staff": {
@@ -33,6 +36,7 @@ ROLE_MATRIX = {
         # "unmute": True,
         "warn": True,
         "note": True,
+        "search": True,
         "clear": True,
     },
     "Admin": {
@@ -42,6 +46,7 @@ ROLE_MATRIX = {
         # "unmute": True,
         "warn": True,
         "note": True,
+        "search": True,
         "clear": True,
     },
 }
