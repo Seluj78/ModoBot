@@ -52,13 +52,17 @@ async def on_ready():
 
 from modobot.models.userban import UserBan
 from modobot.models.userwarn import UserWarn
+from modobot.models.usernote import UserNote
 
 if not UserBan.table_exists():
     UserBan.create_table()
 if not UserWarn.table_exists():
     UserWarn.create_table()
+if not UserNote.table_exists():
+    UserNote.create_table()
 
 import modobot.utils.checks
 import modobot.commands.ban
 import modobot.commands.clear
 import modobot.commands.warn
+import modobot.commands.note

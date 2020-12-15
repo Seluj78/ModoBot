@@ -9,6 +9,10 @@ TODO:
 - [ ] `note` To set a note on a user
 - [ ] `mute`
 - [ ] `unmute`
+- [x] `notes` Add a note on a user, only visible by an admin
+- [ ] `warnings`
+- [ ] `delnote`
+- [ ] `delwarn`
 - [ ] An appeal system where when a user is banned, he can appeal to ask to be redeemed for his ban
 - [ ] Relational db to link actions to moderators
 - [ ] Finer permissions and role handling
