@@ -13,6 +13,7 @@ TODO:
 - [ ] `warnings` See the warnings on a user
 - [ ] `delnote` Deletes a note
 - [ ] `delwarn` Deletes a warning
+- [ ] `search` Gets all info in db of passed user id
 - [x] Pretty help page
 - [x] Add action logs (log what action a moderator takes)
 - [ ] An appeal system where when a user is banned, he can appeal to ask to be redeemed for his ban
