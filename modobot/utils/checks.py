@@ -1,13 +1,18 @@
 from modobot import modobot_client
+from modobot.role_matrice import ROLE_MATRIX
+import logging
 
 
 @modobot_client.check
 async def permissions_check(ctx):
-    allowed_roles = [788149895726628875]
-    role_ids = [role.id for role in ctx.author.roles]
-    for role in role_ids:
-        if role in allowed_roles:
-            return True
+    role_names = [role.name for role in ctx.author.roles]
+    for role in role_names:
+        try:
+            if ROLE_MATRIX[role][ctx.command.name]:
+                return True
+        except KeyError:
+            logging.debug(f"Ignored role {role}")
+            continue
     await ctx.message.delete()
     await ctx.author.send(f"You are not authorized to use `{ctx.command.name}`")
     return False

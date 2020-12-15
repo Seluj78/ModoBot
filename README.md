@@ -24,3 +24,5 @@ TODO:
 - [ ] Add reports for unauthorized use of command
 - [ ] Move commands to COGS
 - [ ] Add a admin interface on flask
+- [ ] DB for managing roles and permissions
+- [ ] Only resp staff and above can warn moderators
