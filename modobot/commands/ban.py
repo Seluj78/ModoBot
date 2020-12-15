@@ -1,7 +1,9 @@
-from modobot import modobot_client
-from modobot.utils.errors import UserAlreadyBannedError, UserNotBannedError
-from modobot.models.userban import UserBan
 import discord
+
+from modobot import modobot_client
+from modobot.models.userban import UserBan
+from modobot.utils.errors import UserAlreadyBannedError
+from modobot.utils.errors import UserNotBannedError
 
 
 @modobot_client.command()
