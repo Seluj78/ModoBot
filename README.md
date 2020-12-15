@@ -27,3 +27,4 @@ TODO:
 - [x] DB for managing roles and permissions
 - [ ] Only resp staff and above can warn/ban moderators
 - [ ] Add lots of logging
+- [ ] Allow clear to be used everywhere

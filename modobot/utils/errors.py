@@ -45,7 +45,7 @@ async def on_command_error(ctx, error):
     elif isinstance(error, UserAlreadyBannedError):
         await send_error_embed(ctx, str(error), "Someone was first.")
     elif isinstance(error, UnauthorizedError):
-        await send_error_embed(ctx, str(error), "You don't have the permissions.")
+        logging.debug(f"Got unauthorized error: {str(error)}")
     elif isinstance(error, commands.CheckFailure):
         logging.error(f"Check failed: {error}")
     else:

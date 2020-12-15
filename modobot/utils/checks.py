@@ -13,18 +13,32 @@ async def permissions_check(ctx):
     if not roleperms:
         await ctx.message.delete()
         raise UnauthorizedError("You're not allowed to use this command")
-    if ctx.command.name == "ban":
-        return roleperms.can_ban
-    elif ctx.command.name == "unban":
-        return roleperms.can_unban
-    elif ctx.command.name == "warn":
-        return roleperms.can_warn
-    elif ctx.command.name == "note":
-        return roleperms.can_note
-    elif ctx.command.name == "search":
-        return roleperms.search
-    elif ctx.command.name == "clear":
-        return roleperms.can_clear
+    if ctx.command.name == "ban" and not roleperms.can_ban:
+        await ctx.message.delete()
+        await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
+        raise UnauthorizedError(f"You're not allowed to use `{ctx.command.name}`")
+    elif ctx.command.name == "unban" and not roleperms.can_unban:
+        await ctx.message.delete()
+        await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
+        raise UnauthorizedError(f"You're not allowed to use `{ctx.command.name}`")
+    elif ctx.command.name == "warn" and not roleperms.can_warn:
+        await ctx.message.delete()
+        await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
+        raise UnauthorizedError(f"You're not allowed to use `{ctx.command.name}`")
+    elif ctx.command.name == "note" and not roleperms.can_note:
+        await ctx.message.delete()
+        await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
+        raise UnauthorizedError(f"You're not allowed to use `{ctx.command.name}`")
+    elif ctx.command.name == "search" and not roleperms.search:
+        await ctx.message.delete()
+        await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
+        raise UnauthorizedError(f"You're not allowed to use `{ctx.command.name}`")
+    elif ctx.command.name == "clear" and not roleperms.can_clear:
+        await ctx.message.delete()
+        await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
+        raise UnauthorizedError(f"You're not allowed to use `{ctx.command.name}`")
+    else:
+        return True
 
 
 @modobot_client.check
@@ -35,6 +49,6 @@ async def channel_check(ctx):
         await ctx.author.send(
             f"The command `{ctx.command.name}` cannot be used in `{ctx.message.channel.name}`"
         )
-        return False
+        raise UnauthorizedError("Cannot use this command in this channel")
     else:
         return True

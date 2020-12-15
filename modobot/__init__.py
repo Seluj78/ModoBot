@@ -27,14 +27,7 @@ for item in REQUIRED_ENV_VARS:
             f"{item} is not set in the server's environment or .env file. It is required."
         )
 
-from modobot.static import (
-    DB_NAME,
-    DB_USER,
-    DB_PASSWORD,
-    DB_PORT,
-    DB_HOST,
-    BOT_TOKEN,
-)
+from modobot.static import DB_NAME, DB_USER, DB_PASSWORD, DB_PORT, DB_HOST  # noqa
 
 setup_logging()
 
@@ -55,6 +48,7 @@ from modobot.models.userban import UserBan
 from modobot.models.userwarn import UserWarn
 from modobot.models.usernote import UserNote
 from modobot.models.actionlog import ActionLog
+from modobot.models.roleperms import RolePerms
 
 if not UserBan.table_exists():
     UserBan.create_table()
@@ -64,10 +58,12 @@ if not UserNote.table_exists():
     UserNote.create_table()
 if not ActionLog.table_exists():
     ActionLog.create_table()
+if not RolePerms.table_exists():
+    RolePerms.create_table()
 
-import modobot.utils.checks
-import modobot.commands.ban
-import modobot.commands.clear
-import modobot.commands.warn
-import modobot.commands.note
-import modobot.commands.search
+import modobot.utils.checks  # noqa
+import modobot.commands.ban  # noqa
+import modobot.commands.clear  # noqa
+import modobot.commands.warn  # noqa
+import modobot.commands.note  # noqa
+import modobot.commands.search  # noqa
