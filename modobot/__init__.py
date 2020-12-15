@@ -57,6 +57,8 @@ async def on_ready():
     for guild in modobot_client.guilds:
         if guild.name == SERVER_NAME:
             for role in guild.roles:
+                if role.name == "@everyone":
+                    continue
                 try:
                     RolePerms.create(name=role.name)
                 except IntegrityError:
