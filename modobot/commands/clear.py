@@ -4,7 +4,7 @@ from modobot import modobot_client
 from modobot.models.actionlog import ActionLog
 
 
-@modobot_client.command(brief="Clears X messages from current channel")
+@modobot_client.command(brief="Supprime X messages dans le canal actuel")
 async def clear(ctx, clear_size: int):
     await ctx.message.delete()
 
@@ -15,7 +15,7 @@ async def clear(ctx, clear_size: int):
     )
 
     embed = discord.Embed(
-        description=f"Successfully cleared `{clear_size}` messages in `{ctx.channel.name}`",
+        description=f"`{clear_size}` messages on été supprimés dans `{ctx.channel.name}`",
         color=discord.Color.gold(),
     )
     await ctx.author.send(embed=embed)

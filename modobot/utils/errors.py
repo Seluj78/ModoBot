@@ -29,25 +29,25 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await send_error_embed(
             ctx,
-            "Missing required arguments",
-            "Please pass all required arguments (try `*help`)",
+            "Arguments requis manquants",
+            "Merci de passer tous les arguments nécéssaires.",
         )
     elif isinstance(error, commands.MissingPermissions):
         await send_error_embed(
-            ctx,
-            "Incorrect permissions",
-            "Contact a higher staff to get the permissions",
+            ctx, "Permissions incorrectes.", "Contactez un staff supérieur."
         )
     elif isinstance(error, commands.CommandNotFound):
-        await send_error_embed(ctx, "Unknown command", "Check `*help`")
+        await send_error_embed(ctx, "Commande inconnue", "")
     elif isinstance(error, commands.MemberNotFound):
-        await send_error_embed(ctx, str(error), "Check the passed member")
+        await send_error_embed(
+            ctx, str(error), "Verifiez l'utilisateur passé en paramettre"
+        )
     elif isinstance(error, UserAlreadyBannedError):
-        await send_error_embed(ctx, str(error), "Someone was first.")
+        await send_error_embed(ctx, str(error), "Cet utilisateur est déjà banni")
     elif isinstance(error, UnauthorizedError):
         logging.debug(f"Got unauthorized error: {str(error)}")
     elif isinstance(error, commands.CheckFailure):
         logging.error(f"Check failed: {error}")
     else:
         logging.error(f"Unknow error {error}")
-        await send_error_embed(ctx, f"Unknow error: {error}", "Try again")
+        await send_error_embed(ctx, f"Erreur inconnue: {error}", "Essayez a nouveau")

@@ -34,3 +34,4 @@ TODO:
 - [ ] Add times in embeds in footers
 - [ ] Tout mettre en français
 - [ ] Improve search resultes (Nicer look and better text)
+- [ ] Redo error embeds.

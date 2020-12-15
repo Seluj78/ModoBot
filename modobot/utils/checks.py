@@ -12,37 +12,61 @@ async def permissions_check(ctx):
             break
     if not roleperms:
         await ctx.message.delete()
-        raise UnauthorizedError("You're not allowed to use this command")
+        raise UnauthorizedError("Vous n'êtes pas authorisé à utiliser cette commande.")
     if ctx.command.name == "ban" and not roleperms.can_ban:
         if not roleperms.silence_notif:
             await ctx.message.delete()
-            await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
-        raise UnauthorizedError(f"You're not allowed to use `{ctx.command.name}`")
+            await ctx.author.send(
+                f"Vous n'êtes pas autorisé à utiliser `{ctx.command.name}`"
+            )
+        raise UnauthorizedError(
+            f"Vous n'êtes pas autorisé à utiliser `{ctx.command.name}`"
+        )
     elif ctx.command.name == "unban" and not roleperms.can_unban:
         if not roleperms.silence_notif:
             await ctx.message.delete()
-            await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
-        raise UnauthorizedError(f"You're not allowed to use `{ctx.command.name}`")
+            await ctx.author.send(
+                f"Vous n'êtes pas autorisé à utiliser `{ctx.command.name}`"
+            )
+        raise UnauthorizedError(
+            f"Vous n'êtes pas autorisé à utiliser `{ctx.command.name}`"
+        )
     elif ctx.command.name == "warn" and not roleperms.can_warn:
         if not roleperms.silence_notif:
             await ctx.message.delete()
-            await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
-        raise UnauthorizedError(f"You're not allowed to use `{ctx.command.name}`")
+            await ctx.author.send(
+                f"Vous n'êtes pas autorisé à utiliser `{ctx.command.name}`"
+            )
+        raise UnauthorizedError(
+            f"Vous n'êtes pas autorisé à utiliser `{ctx.command.name}`"
+        )
     elif ctx.command.name == "note" and not roleperms.can_note:
         if not roleperms.silence_notif:
             await ctx.message.delete()
-            await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
-        raise UnauthorizedError(f"You're not allowed to use `{ctx.command.name}`")
+            await ctx.author.send(
+                f"Vous n'êtes pas autorisé à utiliser `{ctx.command.name}`"
+            )
+        raise UnauthorizedError(
+            f"Vous n'êtes pas autorisé à utiliser `{ctx.command.name}`"
+        )
     elif ctx.command.name == "search" and not roleperms.can_search:
         if not roleperms.silence_notif:
             await ctx.message.delete()
-            await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
-        raise UnauthorizedError(f"You're not allowed to use `{ctx.command.name}`")
+            await ctx.author.send(
+                f"Vous n'êtes pas autorisé à utiliser `{ctx.command.name}`"
+            )
+        raise UnauthorizedError(
+            f"Vous n'êtes pas autorisé à utiliser `{ctx.command.name}`"
+        )
     elif ctx.command.name == "clear" and not roleperms.can_clear:
         if not roleperms.silence_notif:
             await ctx.message.delete()
-            await ctx.author.send(f"You're not allowed to use `{ctx.command.name}`")
-        raise UnauthorizedError(f"You're not allowed to use `{ctx.command.name}`")
+            await ctx.author.send(
+                f"Vous n'êtes pas autorisé à utiliser `{ctx.command.name}`"
+            )
+        raise UnauthorizedError(
+            f"Vous n'êtes pas autorisé à utiliser `{ctx.command.name}`"
+        )
     else:
         return True
 
@@ -53,8 +77,8 @@ async def channel_check(ctx):
     if ctx.message.channel.name not in allowed_channels:
         await ctx.message.delete()
         await ctx.author.send(
-            f"The command `{ctx.command.name}` cannot be used in `{ctx.message.channel.name}`"
+            f"La commande `{ctx.command.name}` ne peut pas être utilisée dans `{ctx.message.channel.name}`"
         )
-        raise UnauthorizedError("Cannot use this command in this channel")
+        raise UnauthorizedError("Impossible d'utiliser cette commande dans ce canal")
     else:
         return True
