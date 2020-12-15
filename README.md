@@ -21,6 +21,7 @@ TODO:
 - [x] DB for managing roles and permissions
 - [x] Auto import of roles
 - [x] pretty embeds for all messages
+- [x] Tout mettre en français
 - [ ] An appeal system where when a user is banned, he can appeal to ask to be redeemed for his ban
 - [ ] Relational db to link actions to moderators
 - [ ] Add reports for unauthorized use of command
@@ -32,6 +33,5 @@ TODO:
 - [ ] custom commands for channels (`!salon`)
 - [ ] Cannot ban user above you
 - [ ] Add times in embeds in footers
-- [ ] Tout mettre en français
 - [ ] Improve search resultes (Nicer look and better text)
 - [ ] Redo error embeds.
