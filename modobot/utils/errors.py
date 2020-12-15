@@ -1,5 +1,6 @@
-from discord.ext import commands
 import logging
+
+from discord.ext import commands
 
 from modobot import modobot_client
 from modobot.utils.embeds import send_error_embed

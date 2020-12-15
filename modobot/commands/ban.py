@@ -1,10 +1,12 @@
+from datetime import datetime
+
 import discord
 
 from modobot import modobot_client
+from modobot.models.actionlog import ActionLog
 from modobot.models.userban import UserBan
 from modobot.utils.errors import UserAlreadyBannedError
 from modobot.utils.errors import UserNotBannedError
-from datetime import datetime
 
 
 @modobot_client.command(brief="Bans a member with the given reason")
@@ -29,9 +31,10 @@ async def ban(ctx, member: discord.Member, *, reason: str):
     await member.ban(reason=reason)
     await ctx.message.delete()
     await ctx.send(f"{ctx.author.id} banned {member.id} for {reason}")
-    UserBan.create(
-        banned_id=member.id, moderator_id=ctx.author.id, reason=reason
-    ).save()
+    UserBan.create(banned_id=member.id, moderator_id=ctx.author.id, reason=reason)
+    ActionLog.create(
+        moderator_id=ctx.author.id, user_id=member.id, action="ban", comments=reason
+    )
 
 
 @modobot_client.command(brief="Unbans a member")
@@ -49,5 +52,8 @@ async def unban(ctx, *, member_id: str):
             banned_user.save()
             await ctx.message.delete()
             await ctx.send(f"{ctx.author.id} unbanned {member_id}")
+            ActionLog.create(
+                moderator_id=ctx.author.id, user_id=member_id, action="unban"
+            )
             return
     raise UserNotBannedError(f"User {member_id} is not banned.")

@@ -1,6 +1,7 @@
 import discord
 
 from modobot import modobot_client
+from modobot.models.actionlog import ActionLog
 from modobot.models.userwarn import UserWarn
 
 
@@ -20,8 +21,9 @@ async def warn(ctx, member: discord.Member, *, reason: str):
     embed.add_field(name="Reason", value=reason, inline=True)
     await member.send(embed=embed)
 
-    UserWarn.create(
-        warned_id=member.id, moderator_id=ctx.author.id, reason=reason
-    ).save()
+    UserWarn.create(warned_id=member.id, moderator_id=ctx.author.id, reason=reason)
     await ctx.message.delete()
     await ctx.send(f"{ctx.author.id} warned {member.id} for {reason}")
+    ActionLog.create(
+        moderator_id=ctx.author.id, user_id=member.id, action="warn", comments=reason
+    )

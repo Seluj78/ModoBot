@@ -1,8 +1,8 @@
 from datetime import datetime
 
+from peewee import BooleanField
 from peewee import CharField
 from peewee import DateTimeField
-from peewee import BooleanField
 
 from modobot.models import BaseModel
 

@@ -1,6 +1,7 @@
 import discord
 
 from modobot import modobot_client
+from modobot.models.actionlog import ActionLog
 from modobot.models.usernote import UserNote
 
 
@@ -12,8 +13,9 @@ async def note(ctx, member: discord.Member, *, reason: str):
         await ctx.message.author.send("You cannot note yourself")
         return
 
-    UserNote.create(
-        notted_id=member.id, moderator_id=ctx.author.id, reason=reason
-    ).save()
+    UserNote.create(notted_id=member.id, moderator_id=ctx.author.id, reason=reason)
     await ctx.message.delete()
     await ctx.send(f"{ctx.author.id} added note on {member.id}: {reason}")
+    ActionLog.create(
+        moderator_id=ctx.author.id, user_id=member.id, action="note", comments=reason
+    )

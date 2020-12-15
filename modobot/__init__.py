@@ -4,9 +4,9 @@ import os
 import peewee
 from discord.ext import commands
 from dotenv import load_dotenv
+from pretty_help import PrettyHelp
 
 from modobot.utils.logging import setup_logging
-from pretty_help import PrettyHelp
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")  # refers to application_top
 dotenv_path = os.path.join(ROOT, ".env")
@@ -54,6 +54,7 @@ async def on_ready():
 from modobot.models.userban import UserBan
 from modobot.models.userwarn import UserWarn
 from modobot.models.usernote import UserNote
+from modobot.models.actionlog import ActionLog
 
 if not UserBan.table_exists():
     UserBan.create_table()
@@ -61,6 +62,8 @@ if not UserWarn.table_exists():
     UserWarn.create_table()
 if not UserNote.table_exists():
     UserNote.create_table()
+if not ActionLog.table_exists():
+    ActionLog.create_table()
 
 import modobot.utils.checks
 import modobot.commands.ban
