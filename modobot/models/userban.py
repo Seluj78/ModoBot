@@ -1,6 +1,9 @@
-from modobot.models import BaseModel
-from peewee import DateTimeField, CharField
 from datetime import datetime
+
+from peewee import CharField
+from peewee import DateTimeField
+
+from modobot.models import BaseModel
 
 
 class UserBan(BaseModel):

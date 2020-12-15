@@ -2,6 +2,7 @@ import os
 
 import peewee
 from dotenv import load_dotenv
+
 from modobot.utils.logging import setup_logging
 
 
@@ -15,12 +16,14 @@ REQUIRED_ENV_VARS = [
     "DB_USER",
     "DB_PASSWORD",
     "DB_NAME",
-    "BOT_TOKEN"
+    "BOT_TOKEN",
 ]
 
 for item in REQUIRED_ENV_VARS:
     if item not in os.environ:
-        raise EnvironmentError(f"{item} is not set in the server's environment or .env file. It is required.")
+        raise EnvironmentError(
+            f"{item} is not set in the server's environment or .env file. It is required."
+        )
 
 from modobot.static import (
     DB_NAME,
@@ -33,7 +36,9 @@ from modobot.static import (
 
 setup_logging()
 
-modo_db = peewee.MySQLDatabase(database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
+modo_db = peewee.MySQLDatabase(
+    database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT
+)
 
 from modobot.models.userban import UserBan
 
