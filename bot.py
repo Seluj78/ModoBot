@@ -12,7 +12,7 @@ load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-client = commands.Bot(command_prefix="*")
+client = commands.Bot(command_prefix="?")
 
 
 async def send_error_embed(ctx, message, solution):
