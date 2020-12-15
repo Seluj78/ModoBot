@@ -11,9 +11,9 @@ from modobot.utils.errors import UserNotBannedError
 
 @modobot_client.command(brief="Bans a member with the given reason")
 async def ban(ctx, member: discord.Member, *, reason: str):
+    await ctx.message.delete()
 
     if not member or member == ctx.message.author:
-        await ctx.message.delete()
         embed = discord.Embed(
             description="You cannot ban yourself.", color=discord.Color.dark_orange()
         )
@@ -35,7 +35,6 @@ async def ban(ctx, member: discord.Member, *, reason: str):
         moderator_id=ctx.author.id, user_id=member.id, action="ban", comments=reason
     )
 
-    await ctx.message.delete()
     embed = discord.Embed(
         description=f"`{str(member)}` (`{member.id}`) was banned.",
         color=discord.Color.red(),
@@ -49,6 +48,8 @@ async def ban(ctx, member: discord.Member, *, reason: str):
 
 @modobot_client.command(brief="Unbans a member")
 async def unban(ctx, *, member_id: str):
+    await ctx.message.delete()
+
     banned_user = UserBan.get_or_none(banned_id=member_id, is_unbanned=False)
     if not banned_user:
         raise UserNotBannedError(f"User {member_id} is not banned.")
@@ -63,8 +64,6 @@ async def unban(ctx, *, member_id: str):
             ActionLog.create(
                 moderator_id=ctx.author.id, user_id=member_id, action="unban"
             )
-
-            await ctx.message.delete()
             embed = discord.Embed(
                 description=f"`{member_id}` was unbanned.",
                 color=discord.Color.dark_gold(),
