@@ -38,9 +38,14 @@ class UserNotBannedError(commands.BadArgument):
         super().__init__(message)
 
 
+class UnauthorizedError(commands.BadArgument):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(message)
+
+
 @client.command()
 async def ban(ctx, member: discord.Member, *, reason: str):
-
     if UserBan.get_or_none(banned_id=member.id):
         raise UserAlreadyBannedError(f"User {str(member)} is already banned")
 
@@ -97,6 +102,8 @@ async def on_command_error(ctx, error):
         await send_error_embed(ctx, str(error), "Check the passed member")
     elif isinstance(error, UserAlreadyBannedError):
         await send_error_embed(ctx, str(error), "Someone was first.")
+    elif isinstance(error, UnauthorizedError):
+        await send_error_embed(ctx, str(error), "You don't have the permissions.")
     else:
         logging.error(f"Unknow error {error}")
         await send_error_embed(ctx, f"Unknow error: {error}", "Try again")
@@ -105,6 +112,16 @@ async def on_command_error(ctx, error):
 @client.event
 async def on_ready():
     logging.info("We have logged in as {0.user}".format(client))
+
+
+@client.before_invoke
+async def before_invoke_check(ctx):
+    allowed_roles = [788149895726628875]
+    role_ids = [role.id for role in ctx.author.roles]
+    for role in role_ids:
+        if role in allowed_roles:
+            return
+    raise UnauthorizedError("You cannot do this")
 
 
 if __name__ == "__main__":
