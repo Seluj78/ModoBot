@@ -8,6 +8,7 @@ from modobot.models.actionlog import ActionLog
 async def lock(ctx, channel: discord.TextChannel = None):
     channel = channel or ctx.channel
 
+    await ctx.message.delete()
     ActionLog.create(
         moderator_id=ctx.author.id, action="lock", comments=f"Locked {str(channel)}"
     )
@@ -18,7 +19,7 @@ async def lock(ctx, channel: discord.TextChannel = None):
     await channel.set_permissions(ctx.guild.default_role, overwrite=overwrite)
 
     embed = discord.Embed(
-        description=f"Canal `{ctx.channel.name}` verouillé", color=discord.Color.red()
+        description=f"Canal `{channel}` verouillé", color=discord.Color.red()
     )
     await ctx.author.send(embed=embed)
     await ctx.send("Canal verrouillé.")
@@ -28,6 +29,7 @@ async def lock(ctx, channel: discord.TextChannel = None):
 async def unlock(ctx, channel: discord.TextChannel = None):
     channel = channel or ctx.channel
 
+    await ctx.message.delete()
     ActionLog.create(
         moderator_id=ctx.author.id, action="unlock", comments=f"Unlocked {str(channel)}"
     )
@@ -37,7 +39,6 @@ async def unlock(ctx, channel: discord.TextChannel = None):
 
     await channel.set_permissions(ctx.guild.default_role, overwrite=overwrite)
     embed = discord.Embed(
-        description=f"Canal `{ctx.channel.name}` déverouillé",
-        color=discord.Color.green(),
+        description=f"Canal `{channel}` déverouillé", color=discord.Color.green()
     )
     await ctx.author.send(embed=embed)

@@ -51,3 +51,8 @@ async def on_command_error(ctx, error):
     else:
         logging.error(f"Unknow error {error}")
         await send_error_embed(ctx, f"Erreur inconnue: {error}", "Essayez a nouveau")
+
+
+@modobot_client.after_invoke
+async def after_invoke(ctx):
+    pass
