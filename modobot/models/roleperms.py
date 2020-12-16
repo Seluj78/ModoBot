@@ -18,6 +18,8 @@ class RolePerms(BaseModel):
     can_lock = BooleanField(default=False)
     can_unlock = BooleanField(default=False)
     can_info = BooleanField(default=True)
+    can_mute = BooleanField(default=True)
+    can_unmute = BooleanField(default=True)
 
 
 class RolePerms_Admin(ModelView):

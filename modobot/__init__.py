@@ -1,8 +1,10 @@
 import logging
 import os
 
+import discord
 import peewee
 from discord.ext import commands
+from discord.utils import sleep_until
 from dotenv import load_dotenv
 from flask import Flask
 from flask_admin import Admin
@@ -11,6 +13,7 @@ from peewee import DoesNotExist
 from peewee import IntegrityError
 from pretty_help import PrettyHelp
 
+from modobot.utils.france_datetime import datetime_now_france
 from modobot.utils.logging import setup_logging
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")  # refers to application_top
@@ -26,6 +29,7 @@ REQUIRED_ENV_VARS = [
     "BOT_TOKEN",
     "SERVER_NAME",
     "FLASK_SECRET_KEY",
+    "SERVER_ID",
 ]
 
 for item in REQUIRED_ENV_VARS:
@@ -42,6 +46,7 @@ from modobot.static import (
     DB_HOST,
     SERVER_NAME,
     FLASK_SECRET_KEY,
+    SERVER_ID,
 )  # noqa
 
 setup_logging()
@@ -76,10 +81,45 @@ modo_db = peewee.MySQLDatabase(
 )
 
 
+async def unmute_user_after(usermute):
+    sleep_until(usermute.dt_unmute)
+
+    guild = modobot_client.get_guild(SERVER_ID)
+
+    for role in guild.roles:
+        if role.name == "Muted":
+            break
+    if not role:
+        raise ValueError("Role 'Muted' not found")
+
+    member = modobot_client.get_user(usermute.muted_id)
+    await member.remove_roles(role)
+
+    last_mute = (
+        UserMute.select()
+        .where(UserMute.muted_id == member.id)
+        .order_by(UserMute.id.desc())
+        .get()
+    )
+    last_mute.is_unmuted = True
+    last_mute.dt_unmuted = datetime_now_france()
+
+    ActionLog.create(
+        moderator="automatic", user=f"{str(member)} ({member.id})", action="unmute"
+    )
+
+    embed = discord.Embed(
+        description=f"Vous avez été unmute de `{guild.name}`.",
+        color=discord.Color.red(),
+    )
+    await member.send(embed=embed)
+
+
 @modobot_client.event
 async def on_ready():
     logging.info("We have logged in as {0.user}".format(modobot_client))
     from modobot.models.roleperms import RolePerms
+    from modobot.models.usermute import UserMute
 
     logging.info("Setting all roles")
     for guild in modobot_client.guilds:
@@ -92,11 +132,17 @@ async def on_ready():
                 except IntegrityError:
                     pass
     logging.info("All roles created")
+    logging.info("Resetting timers for muted members")
+    for usermute in UserMute.select().where(
+        (UserMute.is_unmuted is False) & (UserMute.dt_unmute > datetime_now_france())
+    ):
+        modobot_client.loop.create_task(unmute_user_after(usermute))
 
 
 from modobot.models.userban import UserBan, UserBan_Admin
 from modobot.models.userwarn import UserWarn, UserWarn_Admin
 from modobot.models.usernote import UserNote, UserNote_Admin
+from modobot.models.usermute import UserMute, UserMute_Admin
 from modobot.models.actionlog import ActionLog, ActionLog_Admin
 from modobot.models.roleperms import RolePerms, RolePerms_Admin
 from modobot.models.adminuser import AdminUser, AdminUser_Admin
@@ -111,6 +157,8 @@ if not ActionLog.table_exists():
     ActionLog.create_table()
 if not RolePerms.table_exists():
     RolePerms.create_table()
+if not UserMute.table_exists():
+    UserMute.create_table()
 
 
 import modobot.utils.checks  # noqa
@@ -121,6 +169,7 @@ import modobot.commands.note  # noqa
 import modobot.commands.search  # noqa
 import modobot.commands.lock  # noqa
 import modobot.commands.info  # noqa
+import modobot.commands.mute  # noqa
 
 
 # from afpy.routes.home import home_bp
@@ -146,5 +195,6 @@ admin.add_view(ActionLog_Admin(ActionLog, name="Log"))
 admin.add_view(UserWarn_Admin(UserWarn, name="Avertissements", category="Actions"))
 admin.add_view(UserNote_Admin(UserNote, name="Notes", category="Actions"))
 admin.add_view(UserBan_Admin(UserBan, name="Bans", category="Actions"))
+admin.add_view(UserMute_Admin(UserMute, name="Mutes", category="Actions"))
 admin.add_view(NewAdminView(name="New Admin", endpoint="register_admin"))
 admin.add_view(ChangePasswordView(name="Change password", endpoint="change_password"))

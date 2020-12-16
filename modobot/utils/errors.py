@@ -18,6 +18,12 @@ class UserNotBannedError(commands.BadArgument):
         super().__init__(message)
 
 
+class IncorrectTimeError(commands.BadArgument):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(message)
+
+
 class UnauthorizedError(commands.BadArgument):
     def __init__(self, message):
         self.message = message
@@ -48,6 +54,8 @@ async def on_command_error(ctx, error):
         logging.debug(f"Got unauthorized error: {str(error)}")
     elif isinstance(error, commands.CheckFailure):
         logging.error(f"Check failed: {error}")
+    elif isinstance(error, IncorrectTimeError):
+        await send_error_embed(ctx, str(error), "Format incorrect")
     else:
         logging.error(f"Unknow error {error}")
         await send_error_embed(ctx, f"Erreur inconnue: {error}", "Essayez a nouveau")
