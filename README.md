@@ -10,11 +10,11 @@ TODO:
 - [x] `search` Gets all info in db of passed user id (bans, notes, warnings, mutes)
 - [x] `lock` locks a channel
 - [x] `unlock` unlocks a channel
+- [x] `info` Get info on the accounts (created, joined etc)
 - [ ] `mute` Mutes a user
 - [ ] `unmute` Unmutes a user
 - [ ] `delnote` Deletes a note
 - [ ] `delwarn` Deletes a warning
-- [ ] `info` Get info on the accounts (created, joined etc)
 - [ ] `aban` Ask for ban (modotests)
 - [ ] `aunban` Ask for unban (< resp staff)
 - [x] Pretty help page
