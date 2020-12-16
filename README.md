@@ -8,6 +8,8 @@ TODO:
 - [x] `clear` to clear a count of mesages from a channel
 - [x] `note` To set a note on a user, visible only by moderator
 - [x] `search` Gets all info in db of passed user id (bans, notes, warnings, mutes)
+- [x] `lock` locks a channel
+- [x] `unlock` unlocks a channel
 - [ ] `mute` Mutes a user
 - [ ] `unmute` Unmutes a user
 - [ ] `delnote` Deletes a note
@@ -35,3 +37,7 @@ TODO:
 - [ ] Add times in embeds in footers
 - [ ] Improve search resultes (Nicer look and better text)
 - [ ] Redo error embeds.
+- [ ] Add command that shows what role can do which command
+- [ ] Add warning count to user, add ban after 5 warns
+- [ ] Add reason for lock
+- [ ] Add auto unlock after a period of time

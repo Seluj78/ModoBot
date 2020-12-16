@@ -13,3 +13,5 @@ class RolePerms(BaseModel):
     can_note = BooleanField(default=True)
     can_search = BooleanField(default=True)
     can_clear = BooleanField(default=False)
+    can_lock = BooleanField(default=False)
+    can_unlock = BooleanField(default=False)

@@ -67,6 +67,24 @@ async def permissions_check(ctx):
         raise UnauthorizedError(
             f"Vous n'êtes pas autorisé à utiliser `{ctx.command.name}`"
         )
+    elif ctx.command.name == "lock" and not roleperms.can_lock:
+        if not roleperms.silence_notif:
+            await ctx.message.delete()
+            await ctx.author.send(
+                f"Vous n'êtes pas autorisé à utiliser `{ctx.command.name}`"
+            )
+        raise UnauthorizedError(
+            f"Vous n'êtes pas autorisé à utiliser `{ctx.command.name}`"
+        )
+    elif ctx.command.name == "unlock" and not roleperms.can_unlock:
+        if not roleperms.silence_notif:
+            await ctx.message.delete()
+            await ctx.author.send(
+                f"Vous n'êtes pas autorisé à utiliser `{ctx.command.name}`"
+            )
+        raise UnauthorizedError(
+            f"Vous n'êtes pas autorisé à utiliser `{ctx.command.name}`"
+        )
     else:
         return True
 
