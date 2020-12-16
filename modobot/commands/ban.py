@@ -44,7 +44,7 @@ async def ban(ctx, member: discord.Member, *, reason: str):
     )
     embed.add_field(name="Raison", value=f"`{reason}`.")
     embed.set_footer(
-        text=f"Depuis la commande `{ctx.command.name}` envoyée par {str(ctx.author.name)} dans #{ctx.channel.name}"
+        text=f"Depuis la commande `{ctx.command.name}` envoyée par {str(ctx.author)} dans #{ctx.channel.name}"
     )
     await ctx.channel.send(embed=embed)
 
@@ -55,7 +55,7 @@ async def unban(ctx, *, member_id: str):
 
     banned_user = UserBan.get_or_none(banned_id=member_id, is_unbanned=False)
     if not banned_user:
-        raise UserNotBannedError(f"L'utilisateur {member_id} n'est plus banni.")
+        raise UserNotBannedError(f"L'utilisateur {member_id} n'est pas/plus banni.")
 
     banned_users = await ctx.guild.bans()
     for ban_entry in banned_users:
@@ -75,7 +75,7 @@ async def unban(ctx, *, member_id: str):
             )
             embed.set_footer(
                 text=f"Depuis la commande `{ctx.command.name}` "
-                f"envoyée par {str(ctx.author.name)} dans #{ctx.channel.name}"
+                f"envoyée par {str(ctx.author)} dans #{ctx.channel.name}"
             )
             await ctx.channel.send(embed=embed)
             return

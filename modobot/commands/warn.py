@@ -37,6 +37,6 @@ async def warn(ctx, member: discord.Member, *, reason: str):
     )
     embed.add_field(name="Raison", value=f"`{reason}`.")
     embed.set_footer(
-        text=f"Depuis la commande `{ctx.command.name}` envoyée par {str(ctx.author.name)} dans #{ctx.channel.name}"
+        text=f"Depuis la commande `{ctx.command.name}` envoyée par {str(ctx.author)} dans #{ctx.channel.name}"
     )
     await ctx.channel.send(embed=embed)

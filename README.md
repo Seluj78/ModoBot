@@ -21,7 +21,6 @@ TODO:
 - [x] pretty embeds for all messages
 - [x] Tout mettre en français
 - [x] Add a admin interface on flask
-- [ ] Relational db to link actions to moderators
 - [ ] Add reports for unauthorized use of command
 - [ ] Only resp staff and above can warn/ban moderators
 - [ ] Cannot ban user above you
@@ -32,6 +31,9 @@ TODO:
 - [ ] Add auto unlock after a period of time
 - [ ] Automatically send archive
 - [ ] Pretty embeds for locks
+- [ ] Check all possible errors
+- [ ] Add more emojis
+- [ ] Add check to not do anything on the bot
 
 V2:
 
@@ -48,3 +50,4 @@ V2:
 - [ ] Warns expire after a certain time
 - [ ] Add reason for lock
 - [ ] Stats for overall moderation and stats per moderator
+- [ ] Relational db to link actions to moderators

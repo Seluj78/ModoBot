@@ -11,6 +11,7 @@ from modobot.models.userwarn import UserWarn
 async def search(ctx, member: discord.Member):
     ActionLog.create(
         moderator=f"{ctx.author.id} ({str(ctx.author)})",
+        user=f"{str(member)} ({member.id})",
         action="search",
         comments=member.id,
     )
