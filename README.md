@@ -24,20 +24,21 @@ TODO:
 - [x] Auto import of roles
 - [x] pretty embeds for all messages
 - [x] Tout mettre en français
-- [ ] An appeal system where when a user is banned, he can appeal to ask to be redeemed for his ban
 - [ ] Relational db to link actions to moderators
 - [ ] Add reports for unauthorized use of command
 - [ ] Move commands to COGS
 - [ ] Add a admin interface on flask
 - [ ] Only resp staff and above can warn/ban moderators
+- [ ] Cannot ban user above you
+- [ ] An appeal system where when a user is banned, he can appeal to ask to be redeemed for his ban
 - [ ] Add lots of logging
 - [ ] Allow clear to be used everywhere
 - [ ] custom commands for channels (`!salon`)
-- [ ] Cannot ban user above you
-- [ ] Add times in embeds in footers
-- [ ] Improve search resultes (Nicer look and better text)
+- [ ] Improve search results (Nicer look and better text)
 - [ ] Redo error embeds.
+- [ ] Add times in embeds in footers
 - [ ] Add command that shows what role can do which command
 - [ ] Add warning count to user, add ban after 5 warns
+- [ ] Warns expire after a certain time
 - [ ] Add reason for lock
 - [ ] Add auto unlock after a period of time
