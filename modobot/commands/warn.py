@@ -25,7 +25,10 @@ async def warn(ctx, member: discord.Member, *, reason: str):
 
     UserWarn.create(warned_id=member.id, moderator_id=ctx.author.id, reason=reason)
     ActionLog.create(
-        moderator_id=ctx.author.id, user_id=member.id, action="warn", comments=reason
+        moderator=f"{str(ctx.author)} ({ctx.author.id})",
+        user=f"{str(member)} ({member.id})",
+        action="warn",
+        comments=reason,
     )
 
     embed = discord.Embed(

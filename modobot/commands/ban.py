@@ -32,7 +32,10 @@ async def ban(ctx, member: discord.Member, *, reason: str):
     await member.ban(reason=reason)
     UserBan.create(banned_id=member.id, moderator_id=ctx.author.id, reason=reason)
     ActionLog.create(
-        moderator_id=ctx.author.id, user_id=member.id, action="ban", comments=reason
+        moderator=f"{str(ctx.author)} ({ctx.author.id})",
+        user=f"{str(member)} ({member.id})",
+        action="ban",
+        comments=reason,
     )
 
     embed = discord.Embed(
@@ -62,7 +65,9 @@ async def unban(ctx, *, member_id: str):
             banned_user.dt_unbanned = datetime_now_france()
             banned_user.save()
             ActionLog.create(
-                moderator_id=ctx.author.id, user_id=member_id, action="unban"
+                moderator=f"{str(ctx.author)} ({ctx.author.id})",
+                user=member_id,
+                action="unban",
             )
             embed = discord.Embed(
                 description=f"`{member_id}` à été débanni.",

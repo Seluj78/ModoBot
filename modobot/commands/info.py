@@ -7,7 +7,11 @@ from modobot.models.actionlog import ActionLog
 @modobot_client.command(brief="Informations sur l'utilisateur")
 async def info(ctx, member: discord.Member):
 
-    ActionLog.create(moderator_id=ctx.author.id, user_id=member.id, action="info")
+    ActionLog.create(
+        moderator=f"{str(ctx.author)} ({ctx.author.id})",
+        user=f"{str(member)} ({member.id})",
+        action="info",
+    )
 
     top_role = member.top_role
     user_joined = member.joined_at

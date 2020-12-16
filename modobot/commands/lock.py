@@ -10,7 +10,9 @@ async def lock(ctx, channel: discord.TextChannel = None):
 
     await ctx.message.delete()
     ActionLog.create(
-        moderator_id=ctx.author.id, action="lock", comments=f"Locked {str(channel)}"
+        moderator=f"{str(ctx.author)} ({ctx.author.id})",
+        action="lock",
+        comments=f"Locked {str(channel)}",
     )
 
     overwrite = channel.overwrites_for(ctx.guild.default_role)
@@ -31,7 +33,9 @@ async def unlock(ctx, channel: discord.TextChannel = None):
 
     await ctx.message.delete()
     ActionLog.create(
-        moderator_id=ctx.author.id, action="unlock", comments=f"Unlocked {str(channel)}"
+        moderator=f"{str(ctx.author)} ({ctx.author.id})",
+        action="unlock",
+        comments=f"Unlocked {str(channel)}",
     )
 
     overwrite = channel.overwrites_for(ctx.guild.default_role)

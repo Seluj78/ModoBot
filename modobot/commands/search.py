@@ -9,7 +9,11 @@ from modobot.models.userwarn import UserWarn
 
 @modobot_client.command(brief="Recherche dans la DB sur un utilisateur")
 async def search(ctx, member: discord.Member):
-    ActionLog.create(moderator_id=ctx.author.id, action="search", comments=member.id)
+    ActionLog.create(
+        moderator=f"{ctx.author.id} ({str(ctx.author)})",
+        action="search",
+        comments=member.id,
+    )
     notes = UserNote.select().where(UserNote.noted_id == member.id)
     warns = UserWarn.select().where(UserWarn.warned_id == member.id)
     bans = UserBan.select().where(UserBan.banned_id == member.id)

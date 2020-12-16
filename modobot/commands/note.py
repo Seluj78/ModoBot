@@ -19,7 +19,10 @@ async def note(ctx, member: discord.Member, *, reason: str):
 
     UserNote.create(notted_id=member.id, moderator_id=ctx.author.id, reason=reason)
     ActionLog.create(
-        moderator_id=ctx.author.id, user_id=member.id, action="note", comments=reason
+        moderator=f"{str(ctx.author)} ({ctx.author.id})",
+        user=f"{str(member)} ({member.id})",
+        action="note",
+        comments=reason,
     )
 
     embed = discord.Embed(

@@ -11,7 +11,9 @@ async def clear(ctx, clear_size: int):
     await ctx.channel.purge(limit=clear_size)
 
     ActionLog.create(
-        moderator_id=ctx.author.id, action="clear", comments=f"Cleared {clear_size}"
+        moderator=f"{str(ctx.author)} ({ctx.author.id})",
+        action="clear",
+        comments=f"Cleared {clear_size}",
     )
 
     embed = discord.Embed(
