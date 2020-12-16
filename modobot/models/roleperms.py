@@ -1,3 +1,5 @@
+from flask_admin.contrib.peewee import ModelView
+from flask_login import current_user
 from peewee import BooleanField
 from peewee import CharField
 
@@ -16,3 +18,10 @@ class RolePerms(BaseModel):
     can_lock = BooleanField(default=False)
     can_unlock = BooleanField(default=False)
     can_info = BooleanField(default=True)
+
+
+class RolePerms_Admin(ModelView):
+    model_class = RolePerms
+
+    def is_accessible(self):
+        return current_user.is_authenticated

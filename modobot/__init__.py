@@ -4,6 +4,10 @@ import os
 import peewee
 from discord.ext import commands
 from dotenv import load_dotenv
+from flask import Flask
+from flask_admin import Admin
+from flask_login import LoginManager
+from peewee import DoesNotExist
 from peewee import IntegrityError
 from pretty_help import PrettyHelp
 
@@ -21,6 +25,7 @@ REQUIRED_ENV_VARS = [
     "DB_NAME",
     "BOT_TOKEN",
     "SERVER_NAME",
+    "FLASK_SECRET_KEY",
 ]
 
 for item in REQUIRED_ENV_VARS:
@@ -36,9 +41,32 @@ from modobot.static import (
     DB_PORT,
     DB_HOST,
     SERVER_NAME,
+    FLASK_SECRET_KEY,
 )  # noqa
 
 setup_logging()
+
+application = Flask(__name__)
+
+application.debug = os.getenv("FLASK_DEBUG") in ("true", "1")
+
+application.secret_key = FLASK_SECRET_KEY
+application.config.update(FLASK_SECRET_KEY=FLASK_SECRET_KEY)
+application.config["FLASK_ADMIN_SWATCH"] = "lux"
+
+# Initializes the login manager used for the admin
+login_manager = LoginManager()
+login_manager.init_app(application)
+
+
+# Loads the user when a request is done to a protected page
+@login_manager.user_loader
+def load_user(uid):
+    try:
+        return AdminUser.get_by_id(uid)
+    except DoesNotExist:
+        return None
+
 
 modobot_client = commands.Bot(command_prefix="?", help_command=PrettyHelp())
 
@@ -66,11 +94,12 @@ async def on_ready():
     logging.info("All roles created")
 
 
-from modobot.models.userban import UserBan
-from modobot.models.userwarn import UserWarn
-from modobot.models.usernote import UserNote
-from modobot.models.actionlog import ActionLog
-from modobot.models.roleperms import RolePerms
+from modobot.models.userban import UserBan, UserBan_Admin
+from modobot.models.userwarn import UserWarn, UserWarn_Admin
+from modobot.models.usernote import UserNote, UserNote_Admin
+from modobot.models.actionlog import ActionLog, ActionLog_Admin
+from modobot.models.roleperms import RolePerms, RolePerms_Admin
+from modobot.models.adminuser import AdminUser, AdminUser_Admin
 
 if not UserBan.table_exists():
     UserBan.create_table()
@@ -92,3 +121,30 @@ import modobot.commands.note  # noqa
 import modobot.commands.search  # noqa
 import modobot.commands.lock  # noqa
 import modobot.commands.info  # noqa
+
+
+# from afpy.routes.home import home_bp
+#
+# application.register_blueprint(home_bp)
+
+
+from modobot.routes.admin import AdminIndexView, NewAdminView, ChangePasswordView
+
+# Creates the Admin manager
+admin = Admin(
+    application,
+    name="Among Us France Discord Admin",
+    template_mode="bootstrap4",
+    index_view=AdminIndexView(),
+    base_template="admin/admin_master.html",
+)
+
+# Registers the views for each table
+admin.add_view(AdminUser_Admin(AdminUser))
+admin.add_view(UserWarn_Admin(UserWarn))
+admin.add_view(UserNote_Admin(UserNote))
+admin.add_view(ActionLog_Admin(ActionLog))
+admin.add_view(RolePerms_Admin(RolePerms))
+admin.add_view(UserBan_Admin(UserBan))
+admin.add_view(NewAdminView(name="New Admin", endpoint="register_admin"))
+admin.add_view(ChangePasswordView(name="Change password", endpoint="change_password"))

@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import discord
 
 from modobot import modobot_client
@@ -7,6 +5,7 @@ from modobot.models.actionlog import ActionLog
 from modobot.models.userban import UserBan
 from modobot.utils.errors import UserAlreadyBannedError
 from modobot.utils.errors import UserNotBannedError
+from modobot.utils.france_datetime import datetime_now_france
 
 
 @modobot_client.command(brief="Ban un membre avec la raison donnée")
@@ -60,7 +59,7 @@ async def unban(ctx, *, member_id: str):
         if str(ban_entry.user.id) == str(member_id):
             await ctx.guild.unban(ban_entry.user)
             banned_user.is_unbanned = True
-            banned_user.dt_unbanned = datetime.utcnow()
+            banned_user.dt_unbanned = datetime_now_france()
             banned_user.save()
             ActionLog.create(
                 moderator_id=ctx.author.id, user_id=member_id, action="unban"

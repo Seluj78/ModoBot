@@ -42,3 +42,4 @@ TODO:
 - [ ] Warns expire after a certain time
 - [ ] Add reason for lock
 - [ ] Add auto unlock after a period of time
+- [ ] Stats for overall moderation and stats per moderator
