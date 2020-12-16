@@ -1,5 +1,6 @@
 from flask_admin.contrib.peewee import ModelView
 from flask_login import current_user
+from peewee import BooleanField
 from peewee import CharField
 from peewee import DateTimeField
 from peewee import TextField
@@ -26,6 +27,7 @@ class AdminUser(BaseModel):
     discord_id = CharField(
         null=False, help_text="Your discord ID", verbose_name="Discord ID"
     )
+    is_admin = BooleanField(default=False)
 
     def get_id(self) -> int:
         return int(self.id)
@@ -51,7 +53,7 @@ class AdminUser_Admin(ModelView):
     model_class = AdminUser
 
     def is_accessible(self):
-        return current_user.is_authenticated
+        return current_user.is_authenticated and current_user.is_admin
 
 
 if not AdminUser.table_exists():
@@ -64,4 +66,5 @@ if not AdminUser.table_exists():
             username="admin",
             password=generate_password_hash("password"),
             dt_added=datetime_now_france(),
+            is_admin=True,
         ).save()

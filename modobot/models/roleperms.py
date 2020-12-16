@@ -24,4 +24,4 @@ class RolePerms_Admin(ModelView):
     model_class = RolePerms
 
     def is_accessible(self):
-        return current_user.is_authenticated
+        return current_user.is_authenticated and current_user.is_admin

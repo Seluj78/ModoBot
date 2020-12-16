@@ -53,6 +53,9 @@ class AdminIndexView(admin.AdminIndexView):
 
 
 class NewAdminView(admin.BaseView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.is_admin
+
     @expose("/", methods=("GET", "POST"))
     def register_view(self):
         if not current_user.is_authenticated:
@@ -63,7 +66,7 @@ class NewAdminView(admin.BaseView):
                 email=form.email.data,
                 username=form.username.data,
                 password=generate_password_hash(form.password.data),
-                dt_added=datetime_now_france,
+                dt_added=datetime_now_france(),
             ).save()
             return redirect(url_for("admin.index"))
         return self.render("admin/create_user.html", form=form)

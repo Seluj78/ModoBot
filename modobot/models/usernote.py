@@ -19,4 +19,4 @@ class UserNote_Admin(ModelView):
     column_default_sort = ("dt_noted", True)
 
     def is_accessible(self):
-        return current_user.is_authenticated
+        return current_user.is_authenticated and current_user.is_admin
