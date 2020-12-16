@@ -1,10 +1,10 @@
 import logging
 import os
+from datetime import datetime
 
 import discord
 import peewee
 from discord.ext import commands
-from discord.utils import sleep_until
 from dotenv import load_dotenv
 from flask import Flask
 from flask_admin import Admin
@@ -15,6 +15,7 @@ from pretty_help import PrettyHelp
 
 from modobot.utils.france_datetime import datetime_now_france
 from modobot.utils.logging import setup_logging
+
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")  # refers to application_top
 dotenv_path = os.path.join(ROOT, ".env")
@@ -80,11 +81,13 @@ modo_db = peewee.MySQLDatabase(
     database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT
 )
 
+import asyncio
+
 
 async def unmute_user_after(usermute):
-    sleep_until(usermute.dt_unmute)
+    await asyncio.sleep((usermute.dt_unmute - datetime.now()).seconds)
 
-    guild = modobot_client.get_guild(SERVER_ID)
+    guild = modobot_client.get_guild(int(SERVER_ID))
 
     for role in guild.roles:
         if role.name == "Muted":
@@ -92,7 +95,7 @@ async def unmute_user_after(usermute):
     if not role:
         raise ValueError("Role 'Muted' not found")
 
-    member = modobot_client.get_user(usermute.muted_id)
+    member = await guild.fetch_member(int(usermute.muted_id))
     await member.remove_roles(role)
 
     last_mute = (
@@ -103,6 +106,7 @@ async def unmute_user_after(usermute):
     )
     last_mute.is_unmuted = True
     last_mute.dt_unmuted = datetime_now_france()
+    last_mute.save()
 
     ActionLog.create(
         moderator="automatic", user=f"{str(member)} ({member.id})", action="unmute"
@@ -134,9 +138,11 @@ async def on_ready():
     logging.info("All roles created")
     logging.info("Resetting timers for muted members")
     for usermute in UserMute.select().where(
-        (UserMute.is_unmuted is False) & (UserMute.dt_unmute > datetime_now_france())
+        (UserMute.is_unmuted == False)  # noqa
+        & (UserMute.dt_unmute > datetime_now_france())  # noqa
     ):
         modobot_client.loop.create_task(unmute_user_after(usermute))
+        logging.info(f"Added reset mute for {usermute.id}")
 
 
 from modobot.models.userban import UserBan, UserBan_Admin

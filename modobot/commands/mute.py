@@ -82,6 +82,7 @@ async def mute(ctx, member: discord.Member, time: str, *, reason: str):
     )
     last_mute.is_unmuted = True
     last_mute.dt_unmuted = datetime_now_france()
+    last_mute.save()
 
     ActionLog.create(
         moderator="automatic", user=f"{str(member)} ({member.id})", action="unmute"
@@ -112,6 +113,7 @@ async def unmute(ctx, member: discord.Member):
     )
     last_mute.is_unmuted = True
     last_mute.dt_unmuted = datetime_now_france()
+    last_mute.save()
 
     ActionLog.create(
         moderator=f"{ctx.author.id} ({str(ctx.author)})",

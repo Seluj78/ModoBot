@@ -34,7 +34,7 @@ TODO:
 - [ ] Check all possible errors
 - [ ] Add more emojis
 - [ ] Add check to not do anything on the bot
-
+- [ ] Add task to check if members that were supposed to be unmuted during server downtime be unmuted
 V2:
 
 - [ ] `delnote` Deletes a note
