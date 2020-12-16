@@ -16,6 +16,11 @@ async def lock(ctx, channel: discord.TextChannel = None):
     overwrite.send_messages = False
 
     await channel.set_permissions(ctx.guild.default_role, overwrite=overwrite)
+
+    embed = discord.Embed(
+        description=f"Canal `{ctx.channel.name}` verouillé", color=discord.Color.red()
+    )
+    await ctx.author.send(embed=embed)
     await ctx.send("Canal verrouillé.")
 
 
@@ -31,4 +36,8 @@ async def unlock(ctx, channel: discord.TextChannel = None):
     overwrite.send_messages = True
 
     await channel.set_permissions(ctx.guild.default_role, overwrite=overwrite)
-    await ctx.send("Canal déverrouillé.")
+    embed = discord.Embed(
+        description=f"Canal `{ctx.channel.name}` déverouillé",
+        color=discord.Color.green(),
+    )
+    await ctx.author.send(embed=embed)
