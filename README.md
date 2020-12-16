@@ -24,10 +24,10 @@ TODO:
 - [x] Auto import of roles
 - [x] pretty embeds for all messages
 - [x] Tout mettre en français
+- [x] Add a admin interface on flask
 - [ ] Relational db to link actions to moderators
 - [ ] Add reports for unauthorized use of command
 - [ ] Move commands to COGS
-- [ ] Add a admin interface on flask
 - [ ] Only resp staff and above can warn/ban moderators
 - [ ] Cannot ban user above you
 - [ ] An appeal system where when a user is banned, he can appeal to ask to be redeemed for his ban
@@ -43,3 +43,4 @@ TODO:
 - [ ] Add reason for lock
 - [ ] Add auto unlock after a period of time
 - [ ] Stats for overall moderation and stats per moderator
+- [ ] Automatically send archive

@@ -140,11 +140,11 @@ admin = Admin(
 )
 
 # Registers the views for each table
-admin.add_view(AdminUser_Admin(AdminUser))
-admin.add_view(UserWarn_Admin(UserWarn))
-admin.add_view(UserNote_Admin(UserNote))
-admin.add_view(ActionLog_Admin(ActionLog))
-admin.add_view(RolePerms_Admin(RolePerms))
-admin.add_view(UserBan_Admin(UserBan))
+admin.add_view(AdminUser_Admin(AdminUser, name="Admins"))
+admin.add_view(RolePerms_Admin(RolePerms, name="Permissions"))
+admin.add_view(ActionLog_Admin(ActionLog, name="Log"))
+admin.add_view(UserWarn_Admin(UserWarn, name="Avertissements", category="Actions"))
+admin.add_view(UserNote_Admin(UserNote, name="Notes", category="Actions"))
+admin.add_view(UserBan_Admin(UserBan, name="Bans", category="Actions"))
 admin.add_view(NewAdminView(name="New Admin", endpoint="register_admin"))
 admin.add_view(ChangePasswordView(name="Change password", endpoint="change_password"))

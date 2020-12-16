@@ -1,36 +1,63 @@
 {% extends 'admin/master.html' %}
 {% block body %}
-    {{ super() }}
-    <div class="row-fluid">
+{{ super() }}
+<div class="row-fluid">
     {% include "_parts/flashes.jinja2" %}
-        <div>
-            {% if current_user.is_authenticated %}
-                <h1>AFPy Backend Admin</h1>
-                <p class="lead">
-                    Bienvenue dans le backoffice de l'AFPy. Vous avez accès à la création, modification et suppression d'articles, jobs et admins, ainsi qu'aux tables.<br>
-                    Ne touchez à rien si vous ne savez pas ce que vous faites.
-                </p>
-            {% else %}
-                <form method="POST" action="">
-                    {{ form.hidden_tag() if form.hidden_tag }}
-                    {% for f in form if f.type != 'CSRFTokenField' %}
-                        <div>
-                            {{ f.label }}
-                            {{ f }}
-                            {% if f.errors %}
-                                <ul>
-                                    {% for e in f.errors %}
-                                        <li>{{ e }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                    <button class="btn btn-success" type="submit">Submit</button>
-                </form>
-                {{ link | safe }}
-            {% endif %}
+    <div>
+        {% if current_user.is_authenticated %}
+        <h1>Among Us France Discord Admin</h1>
+        <p class="lead">
+            Bienvenue dans le backoffice de discord.gg/amongusfr. Vous avez accès aux tables.<br>
+            Ne touchez à rien si vous ne savez pas ce que vous faites.
+        </p>
+
+        <!-- https://getbootstrap.com/docs/4.0/components/button-group/ -->
+
+        <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group" role="group" aria-label="First group">
+                <button type="button" class="btn btn-primary" href="#">XXX</button>
+            </div>
+            <div class="btn-group" role="group" aria-label="First group">
+                <button type="button" class="btn btn-primary" href="#">XXX</button>
+            </div>
+            <div class="btn-group" role="group" aria-label="First group">
+                <button type="button" class="btn btn-primary" href="#">XXX</button>
+            </div>
+        </div>
+        <div><br></div>
+        <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group" role="group" aria-label="First group">
+                <button type="button" class="btn btn-primary" href="#">XXX</button>
+            </div>
+            <div class="btn-group" role="group" aria-label="First group">
+                <button type="button" class="btn btn-primary" href="#">XXX</button>
+            </div>
+            <div class="btn-group" role="group" aria-label="First group">
+                <a class="btn btn-primary" href="{{url_for('admin.logout_view')}}">Logout</a>
+            </div>
         </div>
 
+        {% else %}
+        <form method="POST" action="">
+            {{ form.hidden_tag() if form.hidden_tag }}
+            {% for f in form if f.type != 'CSRFTokenField' %}
+            <div>
+                {{ f.label }}
+                {{ f }}
+                {% if f.errors %}
+                <ul>
+                    {% for e in f.errors %}
+                    <li>{{ e }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button class="btn btn-success" type="submit">Submit</button>
+        </form>
+        {{ link | safe }}
+        {% endif %}
     </div>
+
+</div>
 {% endblock body %}

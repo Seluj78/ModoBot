@@ -29,6 +29,7 @@ class ActionLog(BaseModel):
 
 class ActionLog_Admin(ModelView):
     model_class = ActionLog
+    column_default_sort = ("dt_action", True)
 
     def is_accessible(self):
         return current_user.is_authenticated

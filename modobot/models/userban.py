@@ -14,11 +14,12 @@ class UserBan(BaseModel):
     moderator_id = CharField(null=False)
     reason = CharField(null=False)
     is_unbanned = BooleanField(default=False)
-    dt_unbanned = DateTimeField(default=datetime_now_france)
+    dt_unbanned = DateTimeField(null=True)
 
 
 class UserBan_Admin(ModelView):
     model_class = UserBan
+    column_default_sort = ("dt_banned", True)
 
     def is_accessible(self):
         return current_user.is_authenticated

@@ -16,6 +16,7 @@ class UserNote(BaseModel):
 
 class UserNote_Admin(ModelView):
     model_class = UserNote
+    column_default_sort = ("dt_noted", True)
 
     def is_accessible(self):
         return current_user.is_authenticated

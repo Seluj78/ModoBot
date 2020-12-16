@@ -14,11 +14,12 @@ class UserWarn(BaseModel):
     moderator_id = CharField(null=False)
     reason = CharField(null=False)
     is_unwarned = BooleanField(default=False)
-    dt_unwarned = DateTimeField(default=datetime_now_france)
+    dt_unwarned = DateTimeField(null=True)
 
 
 class UserWarn_Admin(ModelView):
     model_class = UserWarn
+    column_default_sort = ("dt_warned", True)
 
     def is_accessible(self):
         return current_user.is_authenticated
