@@ -37,7 +37,7 @@ TODO:
 - [x] Allow clear to be used everywhere
 - [x] Check channels perms for clear
 - [x] Add lots of logging
-- [ ] Replace IDs with mentions in search and others
+- [x] Replace IDs with mentions in search and others
 - [ ] Merge `info` and `search`
 - [ ] Change all colors of embeds
 - [ ] pretty dates/add timeuntil

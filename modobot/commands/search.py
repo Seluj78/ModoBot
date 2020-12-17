@@ -37,17 +37,20 @@ async def search(ctx, member: discord.Member):
     if notes:
         msg = """"""
         for note in notes:
-            msg += f"{note.moderator_id} à noté `{note.reason}` le {note.dt_noted}\n--------\n"
+            moderator = modobot_client.get_user(int(note.moderator_id))
+            msg += f"{str(moderator)} à noté `{note.reason}` le {note.dt_noted}\n--------\n"
         embed.add_field(name="Notes", value=msg, inline=False)
     if warns:
         msg = """"""
         for warn in warns:
-            msg += f"{warn.moderator_id} à averti `{warn.reason}` le {warn.dt_warned}\n--------\n"
+            moderator = modobot_client.get_user(int(warn.moderator_id))
+            msg += f"{str(moderator)} à averti `{warn.reason}` le {warn.dt_warned}\n--------\n"
         embed.add_field(name="Warns", value=msg, inline=False)
     if bans:
         msg = """"""
         for ban in bans:
-            msg += f"{ban.moderator_id} à banni avec comme raison `{ban.reason}` le {ban.dt_banned}"
+            moderator = modobot_client.get_user(int(ban.moderator_id))
+            msg += f"{str(moderator)} à banni avec comme raison `{ban.reason}` le {ban.dt_banned}"
             if ban.is_unbanned:
                 msg += f" (débanni le {ban.dt_unbanned})\n--------\n"
             else:
