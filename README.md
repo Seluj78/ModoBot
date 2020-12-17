@@ -22,21 +22,21 @@ TODO:
 - [x] Tout mettre en français
 - [x] Add a admin interface on flask
 - [x] Add task to check if members that were supposed to be unmuted during server downtime be unmuted
+- [x] Only resp staff and above can warn/ban moderators https://gist.github.com/OneEyedKnight/9e1b2c939185df87bb6dfff0330df9f0#file-moderation-py-L5
+- [x] Cannot ban user above you
+- [x] Add times in embeds in footers
+- [x] Pretty embeds for locks
+- [x] Add more emojis
+- [x] Add check to not do anything on the bot
+- [ ] Check all possible errors
+- [ ] Redo error embeds.
 - [ ] Dissalow double mutes/bans/etc
 - [ ] When a user is muted remove all roles and put them back after
 - [ ] Add reports for unauthorized use of command
-- [x] Only resp staff and above can warn/ban moderators https://gist.github.com/OneEyedKnight/9e1b2c939185df87bb6dfff0330df9f0#file-moderation-py-L5
-- [x] Cannot ban user above you
 - [ ] Add lots of logging
 - [ ] Allow clear to be used everywhere
-- [ ] Redo error embeds.
-- [ ] Add times in embeds in footers
 - [ ] Add auto unlock after a period of time
 - [ ] Automatically send archive
-- [ ] Pretty embeds for locks
-- [ ] Check all possible errors
-- [ ] Add more emojis
-- [ ] Add check to not do anything on the bot
 - [ ] Flask search page
 
 V2:

@@ -1,5 +1,6 @@
 import logging
 
+import discord
 from discord.ext import commands
 
 from modobot import modobot_client
@@ -36,14 +37,17 @@ class PunishSelfError(commands.BadArgument):
         super().__init__(message)
 
 
+class PunishBotError(commands.BadArgument):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(message)
+
+
 @modobot_client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
-        await send_error_embed(
-            ctx,
-            "Arguments requis manquants",
-            "Merci de passer tous les arguments nécéssaires.",
-        )
+        embed = discord.Embed(description=":x: Argument(s) requis manquant(s)")
+        await ctx.channel.send(embed=embed)
     elif isinstance(error, commands.MissingPermissions):
         await send_error_embed(
             ctx, "Permissions incorrectes.", "Contactez un staff supérieur."
@@ -51,13 +55,24 @@ async def on_command_error(ctx, error):
     elif isinstance(error, commands.CommandNotFound):
         await send_error_embed(ctx, "Commande inconnue", "")
     elif isinstance(error, commands.MemberNotFound):
-        await send_error_embed(
-            ctx, str(error), "Verifiez l'utilisateur passé en paramettre"
-        )
+        embed = discord.Embed(description=f":grey_question: {str(error)}")
+        await ctx.channel.send(embed=embed)
+    elif isinstance(error, PunishBotError):
+        embed = discord.Embed(description=f":x: {str(error)}")
+        await ctx.channel.send(embed=embed)
     elif isinstance(error, UserAlreadyBannedError):
         await send_error_embed(ctx, str(error), "Cet utilisateur est déjà banni")
+    elif isinstance(error, UserNotBannedError):
+        embed = discord.Embed(description=f":x: {str(error)}")
+        await ctx.channel.send(embed=embed)
     elif isinstance(error, UnauthorizedError):
-        logging.debug(f"Got unauthorized error: {str(error)}")
+        embed = discord.Embed(
+            description=f":x: Vous n'êtes pas autorisé à utiliser {ctx.command.name}."
+        )
+        embed.set_footer(
+            text="Contactez un administrateur si vous pensez que c'est une erreur."
+        )
+        await ctx.channel.send(embed=embed)
     elif isinstance(error, commands.CheckFailure):
         logging.error(f"Check failed: {error}")
     elif isinstance(error, IncorrectTimeError):

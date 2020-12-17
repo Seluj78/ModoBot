@@ -14,22 +14,15 @@ from modobot.utils.france_datetime import datetime_now_france
 @modobot_client.command(brief="Ban un membre avec la raison donnée")
 async def ban(ctx, member: BaseMember, *, reason: str):
     await ctx.message.delete()
-
-    if not member or member == ctx.message.author:
-        embed = discord.Embed(
-            description="Vous ne pouvez pas vous ban vous-même. :eyes:",
-            color=discord.Color.dark_orange(),
-        )
-        await ctx.channel.send(embed=embed)
-        return
     if UserBan.get_or_none(banned_id=member.id, is_unbanned=False):
         raise UserAlreadyBannedError(f"L'utilisateur {str(member)} est déjà banni.")
 
     embed = discord.Embed(
-        description=f"Vous avez été banni de `{ctx.guild.name}`.",
+        description=f":skull_crossbones: Vous avez été **banni** de `{ctx.guild.name}`.",
         color=discord.Color.red(),
     )
     embed.add_field(name="Raison", value=reason)
+    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
     with contextlib.suppress(discord.Forbidden):
         await member.send(embed=embed)
 
@@ -43,13 +36,11 @@ async def ban(ctx, member: BaseMember, *, reason: str):
     )
 
     embed = discord.Embed(
-        description=f"`{str(member)}` (`{member.id}`) à été banni.",
+        description=f":skull_crossbones: `{str(member)}` (`{member.id}`) à été **banni**.",
         color=discord.Color.red(),
     )
-    embed.add_field(name="Raison", value=f"`{reason}`.")
-    embed.set_footer(
-        text=f"Depuis la commande `{ctx.command.name}` envoyée par {str(ctx.author)} dans #{ctx.channel.name}"
-    )
+    embed.add_field(name="Raison", value=reason)
+    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
     await ctx.channel.send(embed=embed)
 
 
@@ -59,7 +50,7 @@ async def unban(ctx, *, member_id: str):
 
     banned_user = UserBan.get_or_none(banned_id=member_id, is_unbanned=False)
     if not banned_user:
-        raise UserNotBannedError(f"L'utilisateur {member_id} n'est pas/plus banni.")
+        raise UserNotBannedError(f"L'utilisateur {member_id} n'est pas banni.")
 
     banned_users = await ctx.guild.bans()
     for ban_entry in banned_users:
@@ -74,13 +65,10 @@ async def unban(ctx, *, member_id: str):
                 action="unban",
             )
             embed = discord.Embed(
-                description=f"`{member_id}` à été débanni.",
+                description=f":wave: `{member_id}` à été **pardonné** (unban).",
                 color=discord.Color.dark_gold(),
             )
-            embed.set_footer(
-                text=f"Depuis la commande `{ctx.command.name}` "
-                f"envoyée par {str(ctx.author)} dans #{ctx.channel.name}"
-            )
+            embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
             await ctx.channel.send(embed=embed)
             return
     raise UserNotBannedError(f"L'utilisateur {member_id} n'est pas banni.")

@@ -6,21 +6,15 @@ from modobot import modobot_client
 from modobot.models.actionlog import ActionLog
 from modobot.models.userwarn import UserWarn
 from modobot.utils.converters import BaseMember
+from modobot.utils.france_datetime import datetime_now_france
 
 
 @modobot_client.command(brief="Avertis un utilisateur")
 async def warn(ctx, member: BaseMember, *, reason: str):
     await ctx.message.delete()
-    if not member or member == ctx.message.author:
-        embed = discord.Embed(
-            description="Vous ne pouvez pas vous avertir vous même. :eyes:",
-            color=discord.Color.dark_orange(),
-        )
-        await ctx.channel.send(embed=embed)
-        return
 
     embed = discord.Embed(
-        description=f"Vous avez été avertis dans `{ctx.guild.name}`.",
+        description=f":warning: Vous avez été **avertis** dans `{ctx.guild.name}`.",
         color=discord.Color.orange(),
     )
     embed.add_field(name="Raison", value=reason)
@@ -36,11 +30,9 @@ async def warn(ctx, member: BaseMember, *, reason: str):
     )
 
     embed = discord.Embed(
-        description=f"`{str(member)}` (`{member.id}`) à été averti.",
+        description=f":warning: `{str(member)}` (`{member.id}`) à été **averti**.",
         color=discord.Color.orange(),
     )
-    embed.add_field(name="Raison", value=f"`{reason}`.")
-    embed.set_footer(
-        text=f"Depuis la commande `{ctx.command.name}` envoyée par {str(ctx.author)} dans #{ctx.channel.name}"
-    )
+    embed.add_field(name="Raison", value=reason)
+    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
     await ctx.channel.send(embed=embed)

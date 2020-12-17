@@ -6,6 +6,7 @@ from discord.ext import commands
 from modobot import modobot_client
 from modobot.models.roleperms import RolePerms
 from modobot.utils.errors import IncorrectTimeError
+from modobot.utils.errors import PunishBotError
 from modobot.utils.errors import PunishSelfError
 from modobot.utils.france_datetime import datetime_now_france
 
@@ -38,7 +39,7 @@ class BaseMember(commands.Converter):
         )  # gets a member object
 
         if member.id == modobot_client.user.id:
-            raise commands.BadArgument(
+            raise PunishBotError(
                 "Pourquoi me faire tant de mal, je ne suis qu'un bot :robot:"
             )
 
@@ -48,7 +49,7 @@ class BaseMember(commands.Converter):
             if member_roleperms:
                 break
 
-        if not member_roleperms.is_staff:
+        if not member_roleperms or not member_roleperms.is_staff:
             return member
 
         role_names = [role.name for role in ctx.author.roles]

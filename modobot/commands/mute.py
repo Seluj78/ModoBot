@@ -22,14 +22,6 @@ async def mute(
 ):
     await ctx.message.delete()
 
-    if not member or member == ctx.message.author:
-        embed = discord.Embed(
-            description="Vous ne pouvez pas vous mute vous même. :eyes:",
-            color=discord.Color.dark_orange(),
-        )
-        await ctx.channel.send(embed=embed)
-        return
-
     for role in ctx.guild.roles:
         if role.name == "Muted":
             break
@@ -38,7 +30,7 @@ async def mute(
     await member.add_roles(role)
 
     if not reason:
-        reason = "No reason provided"
+        reason = "Pas de raison donnée"
 
     UserMute.create(
         muted_id=member.id,
@@ -55,23 +47,27 @@ async def mute(
     )
 
     embed = discord.Embed(
-        description=f"Vous avez été mute de `{ctx.guild.name}`.",
+        description=f":shushing_face: Vous avez été mute de `{ctx.guild.name}`.",
         color=discord.Color.red(),
     )
     embed.add_field(name="Raison", value=reason)
-    embed.add_field(name="Jusqu'à", value=dt_unmute)
+    embed.add_field(
+        name="Jusqu'à", value=dt_unmute if dt_unmute is not None else "Indéfiniment"
+    )
+    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
     with contextlib.suppress(discord.Forbidden):
         await member.send(embed=embed)
 
     embed = discord.Embed(
-        description=f"`{str(member)}` (`{member.id}`) à été mute.",
+        description=f":shushing_face: `{str(member)}` (`{member.id}`) à été **mute**.",
         color=discord.Color.dark_purple(),
     )
     embed.add_field(name="Raison", value=f"`{reason}`.")
-    embed.add_field(name="Jusqu'à", value=f"`{dt_unmute}`.")
-    embed.set_footer(
-        text=f"Depuis la commande `{ctx.command.name}` envoyée par {str(ctx.author)} dans #{ctx.channel.name}"
+    embed.add_field(
+        name="Jusqu'à",
+        value=f"`{dt_unmute if dt_unmute is not None else 'Indéfiniment'}`.",
     )
+    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
     await ctx.channel.send(embed=embed)
 
     if dt_unmute:
@@ -93,9 +89,10 @@ async def mute(
         )
 
         embed = discord.Embed(
-            description=f"Vous avez été unmute de `{ctx.guild.name}`.",
-            color=discord.Color.red(),
+            description=f":raised_hands: Vous avez été **unmute** de `{ctx.guild.name}`.",
+            color=discord.Color.green(),
         )
+        embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
         with contextlib.suppress(discord.Forbidden):
             await member.send(embed=embed)
 
@@ -127,17 +124,16 @@ async def unmute(ctx, member: discord.Member):
     )
 
     embed = discord.Embed(
-        description=f"Vous avez été unmute de `{ctx.guild.name}`.",
-        color=discord.Color.red(),
+        description=f":raised_hands: Vous avez été **unmute** de `{ctx.guild.name}`.",
+        color=discord.Color.green(),
     )
+    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
     with contextlib.suppress(discord.Forbidden):
         await member.send(embed=embed)
 
     embed = discord.Embed(
-        description=f"`{str(member)}` (`{member.id}`) à été démute.",
+        description=f"`{str(member)}` (`{member.id}`) à été **unmute**.",
         color=discord.Color.dark_purple(),
     )
-    embed.set_footer(
-        text=f"Depuis la commande `{ctx.command.name}` envoyée par {str(ctx.author)} dans #{ctx.channel.name}"
-    )
+    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
     await ctx.channel.send(embed=embed)

@@ -3,19 +3,12 @@ import discord
 from modobot import modobot_client
 from modobot.models.actionlog import ActionLog
 from modobot.models.usernote import UserNote
+from modobot.utils.france_datetime import datetime_now_france
 
 
 @modobot_client.command(brief="Ajoute une note seulement visible par les modérateurs")
 async def note(ctx, member: discord.Member, *, reason: str):
     await ctx.message.delete()
-
-    if not member or member == ctx.message.author:
-        embed = discord.Embed(
-            description="Vous ne pouvez pas vous notez vous même. :eyes:",
-            color=discord.Color.dark_orange(),
-        )
-        await ctx.channel.send(embed=embed)
-        return
 
     UserNote.create(notted_id=member.id, moderator_id=ctx.author.id, reason=reason)
     ActionLog.create(
@@ -26,11 +19,9 @@ async def note(ctx, member: discord.Member, *, reason: str):
     )
 
     embed = discord.Embed(
-        description=f"Note ajoutée sur `{str(member)}` (`{member.id}`).",
+        description=f":notepad_spiral: Note ajoutée sur `{str(member)}` (`{member.id}`).",
         color=discord.Color.blurple(),
     )
-    embed.add_field(name="Note", value=f"`{reason}`.")
-    embed.set_footer(
-        text=f"Depuis la commande `{ctx.command.name}` envoyée par {str(ctx.author)} dans #{ctx.channel.name}"
-    )
+    embed.add_field(name="Note", value=reason)
+    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
     await ctx.channel.send(embed=embed)
