@@ -18,7 +18,7 @@ async def clear(ctx, clear_size: int):
     )
 
     embed = discord.Embed(
-        description=f"**{clear_size} messages** on été supprimés dans `{ctx.channel.name}`",
+        description=f":wastebasket: **{clear_size} messages** on été supprimés dans `{ctx.channel.name}`",
         color=discord.Color.gold(),
     )
     embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")

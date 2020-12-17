@@ -43,26 +43,49 @@ class PunishBotError(commands.BadArgument):
         super().__init__(message)
 
 
+class PunishStaffError(commands.BadArgument):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(message)
+
+
+class AlreadyMuteError(commands.BadArgument):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(message)
+
+
 @modobot_client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.message.delete()
         embed = discord.Embed(description=":x: Argument(s) requis manquant(s)")
         await ctx.channel.send(embed=embed)
-    elif isinstance(error, commands.MissingPermissions):
-        await send_error_embed(
-            ctx, "Permissions incorrectes.", "Contactez un staff supérieur."
-        )
     elif isinstance(error, commands.CommandNotFound):
-        await send_error_embed(ctx, "Commande inconnue", "")
+        await ctx.message.delete()
+        embed = discord.Embed(description=":x: Commande inconnue")
+        await ctx.channel.send(embed=embed)
     elif isinstance(error, commands.MemberNotFound):
+        await ctx.message.delete()
         embed = discord.Embed(description=f":grey_question: {str(error)}")
         await ctx.channel.send(embed=embed)
     elif isinstance(error, PunishBotError):
+        await ctx.message.delete()
+        embed = discord.Embed(description=f":x: {str(error)}")
+        await ctx.channel.send(embed=embed)
+    elif isinstance(error, PunishStaffError):
+        await ctx.message.delete()
+        embed = discord.Embed(description=f":x: {str(error)}")
+        await ctx.channel.send(embed=embed)
+    elif isinstance(error, AlreadyMuteError):
         embed = discord.Embed(description=f":x: {str(error)}")
         await ctx.channel.send(embed=embed)
     elif isinstance(error, UserAlreadyBannedError):
-        await send_error_embed(ctx, str(error), "Cet utilisateur est déjà banni")
+        await ctx.message.delete()
+        embed = discord.Embed(description=":x: Cet utilisateur est déjà banni.")
+        await ctx.channel.send(embed=embed)
     elif isinstance(error, UserNotBannedError):
+        await ctx.message.delete()
         embed = discord.Embed(description=f":x: {str(error)}")
         await ctx.channel.send(embed=embed)
     elif isinstance(error, UnauthorizedError):
@@ -74,16 +97,11 @@ async def on_command_error(ctx, error):
         )
         await ctx.channel.send(embed=embed)
     elif isinstance(error, commands.CheckFailure):
-        logging.error(f"Check failed: {error}")
+        logging.warning(f"Check failed: {error}")
+        await send_error_embed(ctx, f"Erreur de check: {error}", "Essayez a nouveau")
     elif isinstance(error, IncorrectTimeError):
-        await send_error_embed(ctx, str(error), "Format incorrect")
-    elif isinstance(error, PunishSelfError):
-        await send_error_embed(ctx, str(error), "Nope")
+        embed = discord.Embed(description=":x: Format incorrect")
+        await ctx.channel.send(embed=embed)
     else:
         logging.error(f"Unknow error {error}")
         await send_error_embed(ctx, f"Erreur inconnue: {error}", "Essayez a nouveau")
-
-
-@modobot_client.after_invoke
-async def after_invoke(ctx):
-    pass

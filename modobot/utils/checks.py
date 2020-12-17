@@ -16,6 +16,8 @@ async def permissions_check(ctx):
     if not roleperms.is_staff:
         await ctx.message.delete()
         raise UnauthorizedError("Vous n'êtes pas authorisé à utiliser cette commande.")
+    if ctx.command.name == "help":
+        return True
     if not getattr(roleperms, "can_" + ctx.command.name, False):
         if not roleperms.silence_notif:
             await ctx.message.delete()

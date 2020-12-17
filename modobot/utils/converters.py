@@ -7,7 +7,7 @@ from modobot import modobot_client
 from modobot.models.roleperms import RolePerms
 from modobot.utils.errors import IncorrectTimeError
 from modobot.utils.errors import PunishBotError
-from modobot.utils.errors import PunishSelfError
+from modobot.utils.errors import PunishStaffError
 from modobot.utils.france_datetime import datetime_now_france
 
 
@@ -61,6 +61,4 @@ class BaseMember(commands.Converter):
         if author_roleperms.can_punish_staff:
             return member
         else:
-            raise PunishSelfError(
-                "You cannot punish other staff members"
-            )  # tells user that target is a staff member
+            raise PunishStaffError("Vous ne pouvez pas punir un autre membre du staff")

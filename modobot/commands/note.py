@@ -10,7 +10,7 @@ from modobot.utils.france_datetime import datetime_now_france
 async def note(ctx, member: discord.Member, *, reason: str):
     await ctx.message.delete()
 
-    UserNote.create(notted_id=member.id, moderator_id=ctx.author.id, reason=reason)
+    UserNote.create(noted_id=member.id, moderator_id=ctx.author.id, reason=reason)
     ActionLog.create(
         moderator=f"{str(ctx.author)} ({ctx.author.id})",
         user=f"{str(member)} ({member.id})",

@@ -9,6 +9,7 @@ from modobot.models.actionlog import ActionLog
 from modobot.models.usermute import UserMute
 from modobot.utils.converters import BaseMember
 from modobot.utils.converters import TimeConverter
+from modobot.utils.errors import AlreadyMuteError
 from modobot.utils.france_datetime import datetime_now_france
 
 
@@ -21,6 +22,15 @@ async def mute(
     reason: Optional[str] = None,
 ):
     await ctx.message.delete()
+
+    try:
+        UserMute.select().where(
+            (UserMute.muted_id == member.id) & (UserMute.is_unmuted == False)  # noqa
+        ).order_by(UserMute.id.desc()).get()
+    except UserMute.DoesNotExist:
+        pass
+    else:
+        raise AlreadyMuteError("Cet utilisateur est déjà mute.")
 
     for role in ctx.guild.roles:
         if role.name == "Muted":

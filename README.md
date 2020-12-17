@@ -28,16 +28,18 @@ TODO:
 - [x] Pretty embeds for locks
 - [x] Add more emojis
 - [x] Add check to not do anything on the bot
-- [ ] Check all possible errors
-- [ ] Redo error embeds.
-- [ ] Dissalow double mutes/bans/etc
-- [ ] When a user is muted remove all roles and put them back after
+- [x] Check all possible errors
+- [x] Redo error embeds.
+- [x] Dissalow double mutes/bans/etc
 - [ ] Add reports for unauthorized use of command
+- [ ] When a user is muted remove all roles and put them back after
 - [ ] Add lots of logging
 - [ ] Allow clear to be used everywhere
 - [ ] Add auto unlock after a period of time
 - [ ] Automatically send archive
 - [ ] Flask search page
+- [ ] Check channels perms for clear
+- [ ] Replace IDs with mentions in search and others
 
 V2:
 

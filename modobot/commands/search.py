@@ -5,10 +5,12 @@ from modobot.models.actionlog import ActionLog
 from modobot.models.userban import UserBan
 from modobot.models.usernote import UserNote
 from modobot.models.userwarn import UserWarn
+from modobot.utils.france_datetime import datetime_now_france
 
 
 @modobot_client.command(brief="Recherche dans la DB sur un utilisateur")
 async def search(ctx, member: discord.Member):
+    await ctx.message.delete()
     ActionLog.create(
         moderator=f"{ctx.author.id} ({str(ctx.author)})",
         user=f"{str(member)} ({member.id})",
@@ -18,7 +20,10 @@ async def search(ctx, member: discord.Member):
     notes = UserNote.select().where(UserNote.noted_id == member.id)
     warns = UserWarn.select().where(UserWarn.warned_id == member.id)
     bans = UserBan.select().where(UserBan.banned_id == member.id)
-    embed = discord.Embed(color=discord.Color.blue())
+    embed = discord.Embed(
+        description=f":mag_right: **{str(member)}** (`{member.id}`)",
+        color=discord.Color.blue(),
+    )
     if notes:
         msg = """"""
         for note in notes:
@@ -38,6 +43,6 @@ async def search(ctx, member: discord.Member):
             else:
                 msg += "\n"
         embed.add_field(name="Bans", value=msg, inline=False)
-    embed.set_footer(text=f"Recherche sur l'utilisateur {str(member)} ({member.id})")
+    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
 
     await ctx.channel.send(embed=embed)
