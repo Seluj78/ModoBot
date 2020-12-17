@@ -5,6 +5,7 @@ from discord.ext import commands
 
 from modobot import modobot_client
 from modobot.models.roleperms import RolePerms
+from modobot.models.unautorized_report import UnauthorizedReport
 from modobot.utils.errors import IncorrectTimeError
 from modobot.utils.errors import PunishBotError
 from modobot.utils.errors import PunishStaffError
@@ -39,6 +40,12 @@ class BaseMember(commands.Converter):
         )  # gets a member object
 
         if member.id == modobot_client.user.id:
+            UnauthorizedReport.create(
+                moderator_name=str(ctx.author),
+                moderator_id=ctx.author.id,
+                command=ctx.command,
+                type="bot_action",
+            )
             raise PunishBotError(
                 "Pourquoi me faire tant de mal, je ne suis qu'un bot :robot:"
             )
@@ -61,4 +68,10 @@ class BaseMember(commands.Converter):
         if author_roleperms.can_punish_staff:
             return member
         else:
+            UnauthorizedReport.create(
+                moderator_name=str(ctx.author),
+                moderator_id=ctx.author.id,
+                command=ctx.command,
+                type="staff_action",
+            )
             raise PunishStaffError("Vous ne pouvez pas punir un autre membre du staff")

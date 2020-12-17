@@ -166,6 +166,10 @@ from modobot.models.usermute import UserMute, UserMute_Admin
 from modobot.models.actionlog import ActionLog, ActionLog_Admin
 from modobot.models.roleperms import RolePerms, RolePerms_Admin
 from modobot.models.adminuser import AdminUser, AdminUser_Admin
+from modobot.models.unautorized_report import (
+    UnauthorizedReport,
+    UnauthorizedReport_Admin,
+)
 
 if not UserBan.table_exists():
     UserBan.create_table()
@@ -179,7 +183,8 @@ if not RolePerms.table_exists():
     RolePerms.create_table()
 if not UserMute.table_exists():
     UserMute.create_table()
-
+if not UnauthorizedReport.table_exists():
+    UnauthorizedReport.create_table()
 
 import modobot.utils.checks  # noqa
 import modobot.commands.ban  # noqa
@@ -190,11 +195,6 @@ import modobot.commands.search  # noqa
 import modobot.commands.lock  # noqa
 import modobot.commands.info  # noqa
 import modobot.commands.mute  # noqa
-
-
-# from afpy.routes.home import home_bp
-#
-# application.register_blueprint(home_bp)
 
 
 from modobot.routes.admin import AdminIndexView, NewAdminView, ChangePasswordView
@@ -212,6 +212,9 @@ admin = Admin(
 admin.add_view(AdminUser_Admin(AdminUser, name="Admins"))
 admin.add_view(RolePerms_Admin(RolePerms, name="Permissions"))
 admin.add_view(ActionLog_Admin(ActionLog, name="Log"))
+admin.add_view(
+    UnauthorizedReport_Admin(UnauthorizedReport, name="Unauthorized commands")
+)
 admin.add_view(UserWarn_Admin(UserWarn, name="Avertissements", category="Actions"))
 admin.add_view(UserNote_Admin(UserNote, name="Notes", category="Actions"))
 admin.add_view(UserBan_Admin(UserBan, name="Bans", category="Actions"))

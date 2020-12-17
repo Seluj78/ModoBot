@@ -32,7 +32,7 @@ TODO:
 - [x] Redo error embeds.
 - [x] Dissalow double mutes/bans/etc
 - [x] Automatically send archive
-- [ ] Add reports for unauthorized use of command
+- [x] Add reports for unauthorized use of command
 - [ ] When a user is muted remove all roles and put them back after
 - [ ] Add lots of logging
 - [ ] Allow clear to be used everywhere
