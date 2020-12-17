@@ -1,4 +1,5 @@
 import contextlib
+import logging
 
 import discord
 
@@ -14,10 +15,13 @@ from modobot.utils.france_datetime import datetime_now_france
 
 @modobot_client.command(brief="Ban un membre avec la raison donnée")
 async def ban(ctx, member: BaseMember, *, reason: str):
+    logging.debug("Deleting source message")
     await ctx.message.delete()
     if UserBan.get_or_none(banned_id=member.id, is_unbanned=False):
+        logging.warning("User is already banned")
         raise UserAlreadyBannedError(f"L'utilisateur {str(member)} est déjà banni.")
 
+    logging.debug("Creating user ban embed")
     embed = discord.Embed(
         description=f":skull_crossbones: Vous avez été **banni** de `{ctx.guild.name}`.",
         color=discord.Color.red(),
@@ -25,10 +29,16 @@ async def ban(ctx, member: BaseMember, *, reason: str):
     embed.add_field(name="Raison", value=reason)
     embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
     with contextlib.suppress(discord.Forbidden):
+        logging.debug("Sending user ban embed")
         await member.send(embed=embed)
 
+    logging.debug("Banning member")
     await member.ban(reason=reason)
+
+    logging.debug("Creating ban in database")
     UserBan.create(banned_id=member.id, moderator_id=ctx.author.id, reason=reason)
+
+    logging.debug("Creating action log for ban")
     new_log = ActionLog.create(
         moderator_name=str(ctx.author),
         moderator_id=ctx.author.id,
@@ -38,43 +48,49 @@ async def ban(ctx, member: BaseMember, *, reason: str):
         comments=reason,
     )
 
+    logging.debug("Creating channel embed for ban")
     embed = discord.Embed(
         description=f":skull_crossbones: `{str(member)}` (`{member.id}`) à été **banni**.",
         color=discord.Color.red(),
     )
     embed.add_field(name="Raison", value=reason)
     embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
+    logging.debug("Sending channel embed for ban")
     await ctx.channel.send(embed=embed)
+    logging.debug("Sending ban archive")
     await send_archive(actionlog=new_log)
 
 
 @modobot_client.command(brief="Débanne un utilisateur")
 async def unban(ctx, *, member_id: str):
+    logging.debug("Deleting source message")
     await ctx.message.delete()
 
     banned_user = UserBan.get_or_none(banned_id=member_id, is_unbanned=False)
     if not banned_user:
+        logging.debug("User was not banned")
         raise UserNotBannedError(f"L'utilisateur {member_id} n'est pas banni.")
 
-    banned_users = await ctx.guild.bans()
-    for ban_entry in banned_users:
-        if str(ban_entry.user.id) == str(member_id):
-            await ctx.guild.unban(ban_entry.user)
-            banned_user.is_unbanned = True
-            banned_user.dt_unbanned = datetime_now_france()
-            banned_user.save()
-            new_log = ActionLog.create(
-                moderator_name=str(ctx.author),
-                moderator_id=ctx.author.id,
-                user_id=member_id,
-                action="unban",
-            )
-            embed = discord.Embed(
-                description=f":wave: `{member_id}` à été **pardonné** (unban).",
-                color=discord.Color.dark_gold(),
-            )
-            embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
-            await ctx.channel.send(embed=embed)
-            await send_archive(actionlog=new_log)
-            return
-    raise UserNotBannedError(f"L'utilisateur {member_id} n'est pas banni.")
+    logging.debug("Unbanning user")
+    await ctx.guild.unban(discord.Object(id=member_id))
+    logging.debug("Setting ban db to unbanned")
+    banned_user.is_unbanned = True
+    banned_user.dt_unbanned = datetime_now_france()
+    banned_user.save()
+    logging.debug("Creating action log for unban")
+    new_log = ActionLog.create(
+        moderator_name=str(ctx.author),
+        moderator_id=ctx.author.id,
+        user_id=member_id,
+        action="unban",
+    )
+    logging.debug("Creating channel unban embed")
+    embed = discord.Embed(
+        description=f":wave: `{member_id}` à été **pardonné** (unban).",
+        color=discord.Color.dark_gold(),
+    )
+    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
+    logging.debug("Sending channel unban emebed")
+    await ctx.channel.send(embed=embed)
+    logging.debug("Sending unban archive")
+    await send_archive(actionlog=new_log)

@@ -1,4 +1,5 @@
 import contextlib
+import logging
 
 import discord
 
@@ -11,12 +12,15 @@ from modobot.utils.errors import UnauthorizedError
 
 @modobot_client.check
 async def permissions_check(ctx):
+    logging.debug(f"Checking permissions for {str(ctx.author)} for {ctx.command.name}")
     role_names = [role.name for role in ctx.author.roles]
     for role in role_names:
         roleperms = RolePerms.get_or_none(name=role)
         if roleperms:
+            logging.debug(f"Found roleperm {roleperms.id}")
             break
     if not roleperms:
+        logging.warning("No roleperm found, sending error")
         await ctx.message.delete()
         UnauthorizedReport.create(
             moderator_name=str(ctx.author),
@@ -26,6 +30,7 @@ async def permissions_check(ctx):
         )
         raise UnauthorizedError("Vous n'êtes pas authorisé à utiliser cette commande.")
     if not roleperms.is_staff:
+        logging.warning("User is not staff, sending error")
         await ctx.message.delete()
         UnauthorizedReport.create(
             moderator_name=str(ctx.author),
@@ -35,8 +40,12 @@ async def permissions_check(ctx):
         )
         raise UnauthorizedError("Vous n'êtes pas authorisé à utiliser cette commande.")
     if ctx.command.name == "help":
+        logging.debug("Command is help, ignoring permissions check")
         return True
     if not getattr(roleperms, "can_" + ctx.command.name, False):
+        logging.debug(
+            f"User {str(ctx.author)} doesn't have the permission to perform {ctx.command.name}"
+        )
         if not roleperms.silence_notif:
             await ctx.message.delete()
             UnauthorizedReport.create(
@@ -64,9 +73,16 @@ async def permissions_check(ctx):
 
 @modobot_client.check
 async def channel_check(ctx):
+    logging.debug(
+        f"Checking if command {ctx.command.name} can be used in {ctx.channel.name}"
+    )
     if ctx.command.name == "clear":
+        logging.debug("Command is 'clear', allowing")
         return True
-    if ctx.message.channel.id != COMMAND_CHANNEL_ID:
+    if ctx.message.channel.id != int(COMMAND_CHANNEL_ID):
+        logging.debug(
+            f"User {str(ctx.author)} sent command {ctx.command.name} in channel {ctx.channel.name} which is not allowed"
+        )
         await ctx.message.delete()
         with contextlib.suppress(discord.Forbidden):
             await ctx.author.send(

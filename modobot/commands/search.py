@@ -1,3 +1,5 @@
+import logging
+
 import discord
 
 from modobot import modobot_client
@@ -11,7 +13,9 @@ from modobot.utils.france_datetime import datetime_now_france
 
 @modobot_client.command(brief="Recherche dans la DB sur un utilisateur")
 async def search(ctx, member: discord.Member):
+    logging.debug("Deleting source message")
     await ctx.message.delete()
+    logging.debug("Creating action log for search")
     new_log = ActionLog.create(
         moderator_name=str(ctx.author),
         moderator_id=ctx.author.id,
@@ -20,9 +24,12 @@ async def search(ctx, member: discord.Member):
         action="search",
         comments=member.id,
     )
+    logging.debug(f"Getting notes, warns, bans for userc {member.id}")
     notes = UserNote.select().where(UserNote.noted_id == member.id)
     warns = UserWarn.select().where(UserWarn.warned_id == member.id)
     bans = UserBan.select().where(UserBan.banned_id == member.id)
+
+    logging.debug("Creating search embed")
     embed = discord.Embed(
         description=f":mag_right: **{str(member)}** (`{member.id}`)",
         color=discord.Color.blue(),
@@ -48,5 +55,7 @@ async def search(ctx, member: discord.Member):
         embed.add_field(name="Bans", value=msg, inline=False)
     embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
 
+    logging.debug("Sending search embed")
     await ctx.channel.send(embed=embed)
+    logging.debug("Sending search archive")
     await send_archive(actionlog=new_log)

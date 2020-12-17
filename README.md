@@ -36,14 +36,16 @@ TODO:
 - [x] When a user is muted remove all roles and put them back after
 - [x] Allow clear to be used everywhere
 - [x] Check channels perms for clear
-- [ ] Add lots of logging
+- [x] Add lots of logging
 - [ ] Replace IDs with mentions in search and others
 - [ ] Merge `info` and `search`
 - [ ] Change all colors of embeds
 - [ ] pretty dates/add timeuntil
+- [ ] Add archive for clear/lock/unlock
 
 V2:
 
+- [ ] `uclear` Deletes messages from user X times
 - [ ] `delnote` Deletes a note
 - [ ] `delwarn` Deletes a warning
 - [ ] `aban` Ask for ban (modotests)
@@ -62,3 +64,4 @@ V2:
 - [ ] Blacklist words to be deleted automatically like (recherche game)
 - [ ] Move unmute task outside of __init__
 - [ ] Add auto unlock after a period of time
+- [ ] Find a way to optimize getting the role "Muted"

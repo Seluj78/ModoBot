@@ -1,3 +1,5 @@
+import logging
+
 import discord
 
 from modobot import modobot_client
@@ -8,7 +10,10 @@ from modobot.utils.france_datetime import datetime_now_france
 
 @modobot_client.command(brief="Informations sur l'utilisateur")
 async def info(ctx, member: discord.Member):
+    logging.debug("Deleting source message")
     await ctx.message.delete()
+
+    logging.debug("Creating action log for info")
     new_log = ActionLog.create(
         moderator_name=str(ctx.author),
         moderator_id=ctx.author.id,
@@ -23,6 +28,7 @@ async def info(ctx, member: discord.Member):
     user_id = member.id
     user_discordname = str(member)
 
+    logging.debug("Creating info embed")
     embed = discord.Embed(
         title=f"Informations sur {user_display_name} :+1:",
         description=f"`{user_discordname}` (`{user_id}`)",
@@ -32,5 +38,7 @@ async def info(ctx, member: discord.Member):
         value=f"Rejoins le {user_joined}\nGrade le plus haut : {top_role}",
     )
     embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
+    logging.debug("Sending info embed")
     await ctx.channel.send(embed=embed)
+    logging.debug("Sending info archive")
     await send_archive(actionlog=new_log)

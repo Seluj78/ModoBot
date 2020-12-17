@@ -1,7 +1,10 @@
+import logging
+
 import discord
 
 
 async def send_error_embed(ctx, message, solution):
+    logging.error("Sending error embed")
     embed = discord.Embed(
         title="Modobot",
         description="Une erreur s'est produite",

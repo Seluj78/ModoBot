@@ -78,9 +78,10 @@ def load_user(uid):
         return None
 
 
+logging.debug("Creating bot object")
 modobot_client = commands.Bot(command_prefix="?", help_command=PrettyHelp())
 
-
+logging.debug("Connecting to database")
 modo_db = peewee.MySQLDatabase(
     database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT
 )
@@ -88,33 +89,45 @@ modo_db = peewee.MySQLDatabase(
 
 async def unmute_user_after(usermute, skip=False):
     if not skip:
+        logging.debug(
+            f"Usermute {usermute.id}: Sleeping {(usermute.dt_unmute - datetime.now()).seconds} seconds."
+        )
         await asyncio.sleep((usermute.dt_unmute - datetime.now()).seconds)
 
+    logging.debug("Getting guild from server id")
     guild = modobot_client.get_guild(int(SERVER_ID))
 
+    logging.debug("Finding role Muted")
     for role in guild.roles:
         if role.name == "Muted":
             break
     if not role:
         raise ValueError("Role 'Muted' not found")
 
+    logging.debug("Getting muted member")
     member = await guild.fetch_member(int(usermute.muted_id))
+    logging.debug("Removing muted role")
     await member.remove_roles(role)
 
+    logging.debug(f"Getting last mute for member {member.id}")
     last_mute = (
         UserMute.select()
         .where(UserMute.muted_id == member.id)
         .order_by(UserMute.id.desc())
         .get()
     )
+    logging.debug("Setting last mute to unmuted")
     last_mute.is_unmuted = True
     last_mute.dt_unmuted = datetime_now_france()
     last_mute.save()
 
+    logging.debug("Restoring roles to user")
     for role_id in json.loads(last_mute.user_roles):
         role = guild.get_role(role_id)
+        logging.debug(f"Adding role {role.name}")
         await member.add_roles(role)
 
+    logging.debug("Creating action log for automatic unmute")
     new_log = ActionLog.create(
         moderator_name="automatic",
         moderator_id=0,
@@ -129,9 +142,11 @@ async def unmute_user_after(usermute, skip=False):
     )
     embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
     with contextlib.suppress(discord.Forbidden):
+        logging.debug("Sending embed to user")
         await member.send(embed=embed)
     from modobot.utils.archive import send_archive
 
+    logging.debug("Sending unmute archive")
     await send_archive(new_log)
 
 
@@ -150,7 +165,10 @@ async def on_ready():
                 try:
                     RolePerms.create(name=role.name)
                 except IntegrityError:
+                    logging.debug(f"Role {role.name} already exists, skipping")
                     pass
+                else:
+                    logging.debug(f"Added role {role.name}")
     logging.info("All roles created")
     logging.info("Checking timers for muted members")
     for usermute in UserMute.select().where((UserMute.is_unmuted == False)):  # noqa
@@ -177,6 +195,7 @@ from modobot.models.unautorized_report import (
     UnauthorizedReport_Admin,
 )
 
+logging.info("Creating tables")
 if not UserBan.table_exists():
     UserBan.create_table()
 if not UserWarn.table_exists():
@@ -192,6 +211,7 @@ if not UserMute.table_exists():
 if not UnauthorizedReport.table_exists():
     UnauthorizedReport.create_table()
 
+logging.info("Registering commands")
 import modobot.utils.checks  # noqa
 import modobot.commands.ban  # noqa
 import modobot.commands.clear  # noqa
@@ -206,6 +226,7 @@ import modobot.commands.mute  # noqa
 from modobot.routes.admin import AdminIndexView, NewAdminView, ChangePasswordView
 
 # Creates the Admin manager
+logging.info("Registering admin manager")
 admin = Admin(
     application,
     name="Among Us France Discord Admin",
@@ -215,6 +236,7 @@ admin = Admin(
 )
 
 # Registers the views for each table
+logging.info("Registering admin views")
 admin.add_view(AdminUser_Admin(AdminUser, name="Admins"))
 admin.add_view(RolePerms_Admin(RolePerms, name="Permissions"))
 admin.add_view(ActionLog_Admin(ActionLog, name="Log"))

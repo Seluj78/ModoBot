@@ -55,6 +55,12 @@ class AlreadyMuteError(commands.BadArgument):
         super().__init__(message)
 
 
+class NotMutedError(commands.BadArgument):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(message)
+
+
 @modobot_client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
@@ -71,6 +77,9 @@ async def on_command_error(ctx, error):
         await ctx.channel.send(embed=embed)
     elif isinstance(error, PunishBotError):
         await ctx.message.delete()
+        embed = discord.Embed(description=f":x: {str(error)}")
+        await ctx.channel.send(embed=embed)
+    elif isinstance(error, NotMutedError):
         embed = discord.Embed(description=f":x: {str(error)}")
         await ctx.channel.send(embed=embed)
     elif isinstance(error, PunishStaffError):

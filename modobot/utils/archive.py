@@ -1,3 +1,5 @@
+import logging
+
 import discord
 
 from modobot import modobot_client
@@ -6,7 +8,10 @@ from modobot.utils.france_datetime import datetime_now_france
 
 
 async def send_archive(actionlog):
+    logging.info("Preparing to send archive")
+    logging.debug("Getting channel")
     channel = modobot_client.get_channel(int(ARCHIVE_CHANNEL_ID))
+    logging.debug("Preparing embed")
     embed = discord.Embed(
         title=f"**Case {str(actionlog.id)} | {str(actionlog.action).capitalize()} | {actionlog.user_name}**"
     )
@@ -28,4 +33,5 @@ async def send_archive(actionlog):
             name="Raison", value=str(actionlog.comments).split("(jusqu'à ")[0]
         )
     embed.set_footer(text=f"ID: {actionlog.user_id} • {datetime_now_france()}")
+    logging.debug("Sending archive embed")
     await channel.send(embed=embed)
