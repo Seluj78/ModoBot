@@ -11,7 +11,8 @@ async def lock(ctx, channel: discord.TextChannel = None):
 
     channel = channel or ctx.channel
     ActionLog.create(
-        moderator=f"{str(ctx.author)} ({ctx.author.id})",
+        moderator_name=str(ctx.author),
+        moderator_id=ctx.author.id,
         action="lock",
         comments=f"Locked {str(channel)}",
     )
@@ -35,7 +36,8 @@ async def unlock(ctx, channel: discord.TextChannel = None):
 
     await ctx.message.delete()
     ActionLog.create(
-        moderator=f"{str(ctx.author)} ({ctx.author.id})",
+        moderator_name=str(ctx.author),
+        moderator_id=ctx.author.id,
         action="unlock",
         comments=f"Unlocked {str(channel)}",
     )

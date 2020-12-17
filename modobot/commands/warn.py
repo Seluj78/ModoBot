@@ -5,6 +5,7 @@ import discord
 from modobot import modobot_client
 from modobot.models.actionlog import ActionLog
 from modobot.models.userwarn import UserWarn
+from modobot.utils.archive import send_archive
 from modobot.utils.converters import BaseMember
 from modobot.utils.france_datetime import datetime_now_france
 
@@ -22,9 +23,11 @@ async def warn(ctx, member: BaseMember, *, reason: str):
         await member.send(embed=embed)
 
     UserWarn.create(warned_id=member.id, moderator_id=ctx.author.id, reason=reason)
-    ActionLog.create(
-        moderator=f"{str(ctx.author)} ({ctx.author.id})",
-        user=f"{str(member)} ({member.id})",
+    new_log = ActionLog.create(
+        moderator_name=str(ctx.author),
+        moderator_id=ctx.author.id,
+        user_name=str(member),
+        user_id=member.id,
         action="warn",
         comments=reason,
     )
@@ -36,3 +39,4 @@ async def warn(ctx, member: BaseMember, *, reason: str):
     embed.add_field(name="Raison", value=reason)
     embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
     await ctx.channel.send(embed=embed)
+    await send_archive(actionlog=new_log)

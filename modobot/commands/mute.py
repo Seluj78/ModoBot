@@ -7,6 +7,7 @@ from discord.utils import sleep_until
 from modobot import modobot_client
 from modobot.models.actionlog import ActionLog
 from modobot.models.usermute import UserMute
+from modobot.utils.archive import send_archive
 from modobot.utils.converters import BaseMember
 from modobot.utils.converters import TimeConverter
 from modobot.utils.errors import AlreadyMuteError
@@ -49,9 +50,11 @@ async def mute(
         dt_unmute=dt_unmute,
     )
 
-    ActionLog.create(
-        moderator=f"{ctx.author.id} ({str(ctx.author)})",
-        user=f"{str(member)} ({member.id})",
+    new_log = ActionLog.create(
+        moderator_name=str(ctx.author),
+        moderator_id=ctx.author.id,
+        user_name=str(member),
+        user_id=member.id,
         action="mute",
         comments=reason + f"(jusqu'à {dt_unmute})",
     )
@@ -79,6 +82,7 @@ async def mute(
     )
     embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
     await ctx.channel.send(embed=embed)
+    await send_archive(new_log)
 
     if dt_unmute:
         await sleep_until(dt_unmute)
@@ -94,8 +98,12 @@ async def mute(
         last_mute.dt_unmuted = datetime_now_france()
         last_mute.save()
 
-        ActionLog.create(
-            moderator="automatic", user=f"{str(member)} ({member.id})", action="unmute"
+        new_log = ActionLog.create(
+            moderator_name="automatic",
+            moderator_id=0,
+            user_name=str(member),
+            user_id=member.id,
+            action="unmute",
         )
 
         embed = discord.Embed(
@@ -105,6 +113,7 @@ async def mute(
         embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
         with contextlib.suppress(discord.Forbidden):
             await member.send(embed=embed)
+        await send_archive(new_log)
 
 
 @modobot_client.command(brief="Démute un membre")
@@ -127,9 +136,11 @@ async def unmute(ctx, member: discord.Member):
     last_mute.dt_unmuted = datetime_now_france()
     last_mute.save()
 
-    ActionLog.create(
-        moderator=f"{ctx.author.id} ({str(ctx.author)})",
-        user=f"{str(member)} ({member.id})",
+    new_log = ActionLog.create(
+        moderator_name=str(ctx.author),
+        moderator_id=ctx.author.id,
+        user_name=str(member),
+        user_id=member.id,
         action="unmute",
     )
 
@@ -147,3 +158,4 @@ async def unmute(ctx, member: discord.Member):
     )
     embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
     await ctx.channel.send(embed=embed)
+    await send_archive(new_log)

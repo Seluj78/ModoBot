@@ -22,8 +22,10 @@ ACTION_TYPES = [
 
 
 class ActionLog(BaseModel):
-    moderator = CharField(null=False)
-    user = CharField()
+    moderator_name = CharField(null=False)
+    moderator_id = CharField(null=False)
+    user_name = CharField()
+    user_id = CharField()
     dt_action = DateTimeField(default=datetime_now_france)
     action = CharField(null=False, choices=ACTION_TYPES)
     comments = CharField()

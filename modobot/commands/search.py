@@ -5,15 +5,18 @@ from modobot.models.actionlog import ActionLog
 from modobot.models.userban import UserBan
 from modobot.models.usernote import UserNote
 from modobot.models.userwarn import UserWarn
+from modobot.utils.archive import send_archive
 from modobot.utils.france_datetime import datetime_now_france
 
 
 @modobot_client.command(brief="Recherche dans la DB sur un utilisateur")
 async def search(ctx, member: discord.Member):
     await ctx.message.delete()
-    ActionLog.create(
-        moderator=f"{ctx.author.id} ({str(ctx.author)})",
-        user=f"{str(member)} ({member.id})",
+    new_log = ActionLog.create(
+        moderator_name=str(ctx.author),
+        moderator_id=ctx.author.id,
+        user_name=str(member),
+        user_id=member.id,
         action="search",
         comments=member.id,
     )
@@ -46,3 +49,4 @@ async def search(ctx, member: discord.Member):
     embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
 
     await ctx.channel.send(embed=embed)
+    await send_archive(actionlog=new_log)

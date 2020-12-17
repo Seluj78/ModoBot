@@ -32,6 +32,7 @@ REQUIRED_ENV_VARS = [
     "SERVER_NAME",
     "FLASK_SECRET_KEY",
     "SERVER_ID",
+    "ARCHIVE_CHANNEL_ID",
 ]
 
 for item in REQUIRED_ENV_VARS:
@@ -108,8 +109,12 @@ async def unmute_user_after(usermute, skip=False):
     last_mute.dt_unmuted = datetime_now_france()
     last_mute.save()
 
-    ActionLog.create(
-        moderator="automatic", user=f"{str(member)} ({member.id})", action="unmute"
+    new_log = ActionLog.create(
+        moderator_name="automatic",
+        moderator_id=0,
+        user_name=str(member),
+        user_id=member.id,
+        action="unmute",
     )
 
     embed = discord.Embed(
@@ -119,6 +124,9 @@ async def unmute_user_after(usermute, skip=False):
     embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
     with contextlib.suppress(discord.Forbidden):
         await member.send(embed=embed)
+    from modobot.utils.archive import send_archive
+
+    await send_archive(new_log)
 
 
 @modobot_client.event

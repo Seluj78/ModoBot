@@ -5,6 +5,7 @@ import discord
 from modobot import modobot_client
 from modobot.models.actionlog import ActionLog
 from modobot.models.userban import UserBan
+from modobot.utils.archive import send_archive
 from modobot.utils.converters import BaseMember
 from modobot.utils.errors import UserAlreadyBannedError
 from modobot.utils.errors import UserNotBannedError
@@ -28,9 +29,11 @@ async def ban(ctx, member: BaseMember, *, reason: str):
 
     await member.ban(reason=reason)
     UserBan.create(banned_id=member.id, moderator_id=ctx.author.id, reason=reason)
-    ActionLog.create(
-        moderator=f"{str(ctx.author)} ({ctx.author.id})",
-        user=f"{str(member)} ({member.id})",
+    new_log = ActionLog.create(
+        moderator_name=str(ctx.author),
+        moderator_id=ctx.author.id,
+        user_name=str(member),
+        user_id=member.id,
         action="ban",
         comments=reason,
     )
@@ -42,6 +45,7 @@ async def ban(ctx, member: BaseMember, *, reason: str):
     embed.add_field(name="Raison", value=reason)
     embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
     await ctx.channel.send(embed=embed)
+    await send_archive(actionlog=new_log)
 
 
 @modobot_client.command(brief="Débanne un utilisateur")
@@ -59,9 +63,10 @@ async def unban(ctx, *, member_id: str):
             banned_user.is_unbanned = True
             banned_user.dt_unbanned = datetime_now_france()
             banned_user.save()
-            ActionLog.create(
-                moderator=f"{str(ctx.author)} ({ctx.author.id})",
-                user=member_id,
+            new_log = ActionLog.create(
+                moderator_name=str(ctx.author),
+                moderator_id=ctx.author.id,
+                user_id=member_id,
                 action="unban",
             )
             embed = discord.Embed(
@@ -70,5 +75,6 @@ async def unban(ctx, *, member_id: str):
             )
             embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
             await ctx.channel.send(embed=embed)
+            await send_archive(actionlog=new_log)
             return
     raise UserNotBannedError(f"L'utilisateur {member_id} n'est pas banni.")

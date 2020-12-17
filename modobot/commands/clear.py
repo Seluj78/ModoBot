@@ -12,7 +12,8 @@ async def clear(ctx, clear_size: int):
     await ctx.channel.purge(limit=clear_size)
 
     ActionLog.create(
-        moderator=f"{str(ctx.author)} ({ctx.author.id})",
+        moderator_name=str(ctx.author),
+        moderator_id=ctx.author.id,
         action="clear",
         comments=f"Cleared {clear_size}",
     )

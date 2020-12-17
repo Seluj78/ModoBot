@@ -31,15 +31,18 @@ TODO:
 - [x] Check all possible errors
 - [x] Redo error embeds.
 - [x] Dissalow double mutes/bans/etc
+- [x] Automatically send archive
 - [ ] Add reports for unauthorized use of command
 - [ ] When a user is muted remove all roles and put them back after
 - [ ] Add lots of logging
 - [ ] Allow clear to be used everywhere
 - [ ] Add auto unlock after a period of time
-- [ ] Automatically send archive
 - [ ] Flask search page
 - [ ] Check channels perms for clear
 - [ ] Replace IDs with mentions in search and others
+- [ ] Merge `info` and `search`
+- [ ] Change all colors of embeds
+- [ ] pretty dates/add timeuntil
 
 V2:
 
@@ -57,3 +60,4 @@ V2:
 - [ ] Add reason for lock
 - [ ] Stats for overall moderation and stats per moderator
 - [ ] Relational db to link actions to moderators
+- [ ] Blacklist words to be deleted automatically like (recherche game)
