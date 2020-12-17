@@ -6,7 +6,7 @@ from modobot.utils.france_datetime import datetime_now_france
 
 
 async def send_archive(actionlog):
-    channel = modobot_client.get_channel(ARCHIVE_CHANNEL_ID)
+    channel = modobot_client.get_channel(int(ARCHIVE_CHANNEL_ID))
     embed = discord.Embed(
         title=f"**Case {str(actionlog.id)} | {str(actionlog.action).capitalize()} | {actionlog.user_name}**"
     )

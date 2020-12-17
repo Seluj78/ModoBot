@@ -1,4 +1,5 @@
 import contextlib
+import json
 from typing import Optional
 
 import discord
@@ -33,6 +34,11 @@ async def mute(
     else:
         raise AlreadyMuteError("Cet utilisateur est déjà mute.")
 
+    user_roles = []
+    for role in member.roles[1:]:
+        user_roles.append(role.id)
+        await member.remove_roles(role)
+
     for role in ctx.guild.roles:
         if role.name == "Muted":
             break
@@ -43,11 +49,12 @@ async def mute(
     if not reason:
         reason = "Pas de raison donnée"
 
-    UserMute.create(
+    new_mute = UserMute.create(
         muted_id=member.id,
         moderator_id=ctx.author.id,
         reason=reason,
         dt_unmute=dt_unmute,
+        user_roles=json.dumps(user_roles),
     )
 
     new_log = ActionLog.create(
@@ -87,16 +94,13 @@ async def mute(
     if dt_unmute:
         await sleep_until(dt_unmute)
         await member.remove_roles(role)
+        for role_id in user_roles:
+            role = ctx.guild.get_role(role_id)
+            await member.add_roles(role)
 
-        last_mute = (
-            UserMute.select()
-            .where(UserMute.muted_id == member.id)
-            .order_by(UserMute.id.desc())
-            .get()
-        )
-        last_mute.is_unmuted = True
-        last_mute.dt_unmuted = datetime_now_france()
-        last_mute.save()
+        new_mute.is_unmuted = True
+        new_mute.dt_unmuted = datetime_now_france()
+        new_mute.save()
 
         new_log = ActionLog.create(
             moderator_name="automatic",
@@ -135,6 +139,10 @@ async def unmute(ctx, member: discord.Member):
     last_mute.is_unmuted = True
     last_mute.dt_unmuted = datetime_now_france()
     last_mute.save()
+
+    for role_id in json.loads(last_mute.user_roles):
+        role = ctx.guild.get_role(role_id)
+        await member.add_roles(role)
 
     new_log = ActionLog.create(
         moderator_name=str(ctx.author),

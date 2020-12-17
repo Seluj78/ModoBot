@@ -5,6 +5,7 @@ import discord
 from modobot import modobot_client
 from modobot.models.roleperms import RolePerms
 from modobot.models.unautorized_report import UnauthorizedReport
+from modobot.static import COMMAND_CHANNEL_ID
 from modobot.utils.errors import UnauthorizedError
 
 
@@ -63,8 +64,9 @@ async def permissions_check(ctx):
 
 @modobot_client.check
 async def channel_check(ctx):
-    allowed_channels = ["commandes"]
-    if ctx.message.channel.name not in allowed_channels:
+    if ctx.command.name == "clear":
+        return True
+    if ctx.message.channel.id != COMMAND_CHANNEL_ID:
         await ctx.message.delete()
         with contextlib.suppress(discord.Forbidden):
             await ctx.author.send(

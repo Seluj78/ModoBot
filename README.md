@@ -33,12 +33,10 @@ TODO:
 - [x] Dissalow double mutes/bans/etc
 - [x] Automatically send archive
 - [x] Add reports for unauthorized use of command
-- [ ] When a user is muted remove all roles and put them back after
+- [x] When a user is muted remove all roles and put them back after
+- [x] Allow clear to be used everywhere
+- [x] Check channels perms for clear
 - [ ] Add lots of logging
-- [ ] Allow clear to be used everywhere
-- [ ] Add auto unlock after a period of time
-- [ ] Flask search page
-- [ ] Check channels perms for clear
 - [ ] Replace IDs with mentions in search and others
 - [ ] Merge `info` and `search`
 - [ ] Change all colors of embeds
@@ -50,6 +48,7 @@ V2:
 - [ ] `delwarn` Deletes a warning
 - [ ] `aban` Ask for ban (modotests)
 - [ ] `aunban` Ask for unban (< resp staff)
+- [ ] Flask search page
 - [ ] Move commands to COGS
 - [ ] An appeal system where when a user is banned, he can appeal to ask to be redeemed for his ban
 - [ ] custom commands for channels (`!salon`)
@@ -61,3 +60,5 @@ V2:
 - [ ] Stats for overall moderation and stats per moderator
 - [ ] Relational db to link actions to moderators
 - [ ] Blacklist words to be deleted automatically like (recherche game)
+- [ ] Move unmute task outside of __init__
+- [ ] Add auto unlock after a period of time

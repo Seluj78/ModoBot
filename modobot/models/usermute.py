@@ -15,6 +15,7 @@ class UserMute(BaseModel):
     reason = CharField(null=False)
     is_unmuted = BooleanField(default=False)
     dt_unmute = DateTimeField(null=True)
+    user_roles = CharField(null=False)
 
 
 class UserMute_Admin(ModelView):

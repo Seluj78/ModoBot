@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+import json
 import logging
 import os
 from datetime import datetime
@@ -33,6 +34,7 @@ REQUIRED_ENV_VARS = [
     "FLASK_SECRET_KEY",
     "SERVER_ID",
     "ARCHIVE_CHANNEL_ID",
+    "COMMAND_CHANNEL_ID",
 ]
 
 for item in REQUIRED_ENV_VARS:
@@ -108,6 +110,10 @@ async def unmute_user_after(usermute, skip=False):
     last_mute.is_unmuted = True
     last_mute.dt_unmuted = datetime_now_france()
     last_mute.save()
+
+    for role_id in json.loads(last_mute.user_roles):
+        role = guild.get_role(role_id)
+        await member.add_roles(role)
 
     new_log = ActionLog.create(
         moderator_name="automatic",
