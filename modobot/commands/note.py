@@ -14,7 +14,7 @@ async def note(ctx, member: discord.Member, *, reason: str):
             description="Vous ne pouvez pas vous notez vous même. :eyes:",
             color=discord.Color.dark_orange(),
         )
-        await ctx.author.send(embed=embed)
+        await ctx.channel.send(embed=embed)
         return
 
     UserNote.create(notted_id=member.id, moderator_id=ctx.author.id, reason=reason)

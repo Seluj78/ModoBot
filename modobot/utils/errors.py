@@ -30,6 +30,12 @@ class UnauthorizedError(commands.BadArgument):
         super().__init__(message)
 
 
+class PunishSelfError(commands.BadArgument):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(message)
+
+
 @modobot_client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
@@ -56,6 +62,8 @@ async def on_command_error(ctx, error):
         logging.error(f"Check failed: {error}")
     elif isinstance(error, IncorrectTimeError):
         await send_error_embed(ctx, str(error), "Format incorrect")
+    elif isinstance(error, PunishSelfError):
+        await send_error_embed(ctx, str(error), "Nope")
     else:
         logging.error(f"Unknow error {error}")
         await send_error_embed(ctx, f"Erreur inconnue: {error}", "Essayez a nouveau")

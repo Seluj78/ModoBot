@@ -1,19 +1,22 @@
+import contextlib
+
 import discord
 
 from modobot import modobot_client
 from modobot.models.actionlog import ActionLog
 from modobot.models.userwarn import UserWarn
+from modobot.utils.converters import BaseMember
 
 
 @modobot_client.command(brief="Avertis un utilisateur")
-async def warn(ctx, member: discord.Member, *, reason: str):
+async def warn(ctx, member: BaseMember, *, reason: str):
     await ctx.message.delete()
     if not member or member == ctx.message.author:
         embed = discord.Embed(
             description="Vous ne pouvez pas vous avertir vous même. :eyes:",
             color=discord.Color.dark_orange(),
         )
-        await ctx.author.send(embed=embed)
+        await ctx.channel.send(embed=embed)
         return
 
     embed = discord.Embed(
@@ -21,7 +24,8 @@ async def warn(ctx, member: discord.Member, *, reason: str):
         color=discord.Color.orange(),
     )
     embed.add_field(name="Raison", value=reason)
-    await member.send(embed=embed)
+    with contextlib.suppress(discord.Forbidden):
+        await member.send(embed=embed)
 
     UserWarn.create(warned_id=member.id, moderator_id=ctx.author.id, reason=reason)
     ActionLog.create(

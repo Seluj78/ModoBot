@@ -23,8 +23,7 @@ async def lock(ctx, channel: discord.TextChannel = None):
     embed = discord.Embed(
         description=f"Canal `{channel}` verouillé", color=discord.Color.red()
     )
-    await ctx.author.send(embed=embed)
-    await ctx.send("Canal verrouillé.")
+    await ctx.channel.send(embed=embed)
 
 
 @modobot_client.command(brief="Déverrouille un channel")
@@ -45,4 +44,4 @@ async def unlock(ctx, channel: discord.TextChannel = None):
     embed = discord.Embed(
         description=f"Canal `{channel}` déverouillé", color=discord.Color.green()
     )
-    await ctx.author.send(embed=embed)
+    await ctx.channel.send(embed=embed)

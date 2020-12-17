@@ -1,15 +1,18 @@
+import contextlib
+
 import discord
 
 from modobot import modobot_client
 from modobot.models.actionlog import ActionLog
 from modobot.models.userban import UserBan
+from modobot.utils.converters import BaseMember
 from modobot.utils.errors import UserAlreadyBannedError
 from modobot.utils.errors import UserNotBannedError
 from modobot.utils.france_datetime import datetime_now_france
 
 
 @modobot_client.command(brief="Ban un membre avec la raison donnée")
-async def ban(ctx, member: discord.Member, *, reason: str):
+async def ban(ctx, member: BaseMember, *, reason: str):
     await ctx.message.delete()
 
     if not member or member == ctx.message.author:
@@ -17,7 +20,7 @@ async def ban(ctx, member: discord.Member, *, reason: str):
             description="Vous ne pouvez pas vous ban vous-même. :eyes:",
             color=discord.Color.dark_orange(),
         )
-        await ctx.author.send(embed=embed)
+        await ctx.channel.send(embed=embed)
         return
     if UserBan.get_or_none(banned_id=member.id, is_unbanned=False):
         raise UserAlreadyBannedError(f"L'utilisateur {str(member)} est déjà banni.")
@@ -27,7 +30,8 @@ async def ban(ctx, member: discord.Member, *, reason: str):
         color=discord.Color.red(),
     )
     embed.add_field(name="Raison", value=reason)
-    await member.send(embed=embed)
+    with contextlib.suppress(discord.Forbidden):
+        await member.send(embed=embed)
 
     await member.ban(reason=reason)
     UserBan.create(banned_id=member.id, moderator_id=ctx.author.id, reason=reason)

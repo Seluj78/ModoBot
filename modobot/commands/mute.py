@@ -1,3 +1,4 @@
+import contextlib
 from typing import Optional
 
 import discord
@@ -6,6 +7,7 @@ from discord.utils import sleep_until
 from modobot import modobot_client
 from modobot.models.actionlog import ActionLog
 from modobot.models.usermute import UserMute
+from modobot.utils.converters import BaseMember
 from modobot.utils.converters import TimeConverter
 from modobot.utils.france_datetime import datetime_now_france
 
@@ -13,12 +15,21 @@ from modobot.utils.france_datetime import datetime_now_france
 @modobot_client.command(brief="Mute un membre durant la durée donnée")
 async def mute(
     ctx,
-    member: discord.Member,
+    member: BaseMember,
     dt_unmute: Optional[TimeConverter] = None,
     *,
     reason: Optional[str] = None,
 ):
     await ctx.message.delete()
+
+    if not member or member == ctx.message.author:
+        embed = discord.Embed(
+            description="Vous ne pouvez pas vous mute vous même. :eyes:",
+            color=discord.Color.dark_orange(),
+        )
+        await ctx.channel.send(embed=embed)
+        return
+
     for role in ctx.guild.roles:
         if role.name == "Muted":
             break
@@ -49,7 +60,8 @@ async def mute(
     )
     embed.add_field(name="Raison", value=reason)
     embed.add_field(name="Jusqu'à", value=dt_unmute)
-    await member.send(embed=embed)
+    with contextlib.suppress(discord.Forbidden):
+        await member.send(embed=embed)
 
     embed = discord.Embed(
         description=f"`{str(member)}` (`{member.id}`) à été mute.",
@@ -84,7 +96,8 @@ async def mute(
             description=f"Vous avez été unmute de `{ctx.guild.name}`.",
             color=discord.Color.red(),
         )
-        await member.send(embed=embed)
+        with contextlib.suppress(discord.Forbidden):
+            await member.send(embed=embed)
 
 
 @modobot_client.command(brief="Démute un membre")
@@ -117,7 +130,8 @@ async def unmute(ctx, member: discord.Member):
         description=f"Vous avez été unmute de `{ctx.guild.name}`.",
         color=discord.Color.red(),
     )
-    await member.send(embed=embed)
+    with contextlib.suppress(discord.Forbidden):
+        await member.send(embed=embed)
 
     embed = discord.Embed(
         description=f"`{str(member)}` (`{member.id}`) à été démute.",

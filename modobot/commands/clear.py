@@ -20,4 +20,4 @@ async def clear(ctx, clear_size: int):
         description=f"`{clear_size}` messages on été supprimés dans `{ctx.channel.name}`",
         color=discord.Color.gold(),
     )
-    await ctx.author.send(embed=embed)
+    await ctx.channel.send(embed=embed)

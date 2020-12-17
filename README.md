@@ -22,11 +22,11 @@ TODO:
 - [x] Tout mettre en français
 - [x] Add a admin interface on flask
 - [x] Add task to check if members that were supposed to be unmuted during server downtime be unmuted
-- [ ] Dissalow double mutes
+- [ ] Dissalow double mutes/bans/etc
 - [ ] When a user is muted remove all roles and put them back after
 - [ ] Add reports for unauthorized use of command
-- [ ] Only resp staff and above can warn/ban moderators
-- [ ] Cannot ban user above you
+- [x] Only resp staff and above can warn/ban moderators https://gist.github.com/OneEyedKnight/9e1b2c939185df87bb6dfff0330df9f0#file-moderation-py-L5
+- [x] Cannot ban user above you
 - [ ] Add lots of logging
 - [ ] Allow clear to be used everywhere
 - [ ] Redo error embeds.

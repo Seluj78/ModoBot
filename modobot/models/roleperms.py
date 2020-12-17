@@ -8,6 +8,7 @@ from modobot.models import BaseModel
 
 class RolePerms(BaseModel):
     name = CharField(null=False, unique=True)
+    is_staff = BooleanField(default=False)
     silence_notif = BooleanField(default=True)
     can_ban = BooleanField(default=True)
     can_unban = BooleanField(default=False)
@@ -20,6 +21,7 @@ class RolePerms(BaseModel):
     can_info = BooleanField(default=True)
     can_mute = BooleanField(default=True)
     can_unmute = BooleanField(default=True)
+    can_punish_staff = BooleanField(default=False)
 
 
 class RolePerms_Admin(ModelView):
