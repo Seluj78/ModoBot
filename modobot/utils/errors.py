@@ -65,41 +65,60 @@ class NotMutedError(commands.BadArgument):
 async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.message.delete()
-        embed = discord.Embed(description=":x: Argument(s) requis manquant(s)")
+        embed = discord.Embed(
+            description=":x: Argument(s) requis manquant(s)", color=discord.Color.red()
+        )
         await ctx.channel.send(embed=embed)
     elif isinstance(error, commands.CommandNotFound):
         await ctx.message.delete()
-        embed = discord.Embed(description=":x: Commande inconnue")
+        embed = discord.Embed(
+            description=":x: Commande inconnue", color=discord.Color.red()
+        )
         await ctx.channel.send(embed=embed)
     elif isinstance(error, commands.MemberNotFound):
         await ctx.message.delete()
-        embed = discord.Embed(description=f":grey_question: {str(error)}")
+        embed = discord.Embed(
+            description=f":grey_question: {str(error)}", color=discord.Color.red()
+        )
         await ctx.channel.send(embed=embed)
     elif isinstance(error, PunishBotError):
         await ctx.message.delete()
-        embed = discord.Embed(description=f":x: {str(error)}")
+        embed = discord.Embed(
+            description=f":x: {str(error)}", color=discord.Color.red()
+        )
         await ctx.channel.send(embed=embed)
     elif isinstance(error, NotMutedError):
-        embed = discord.Embed(description=f":x: {str(error)}")
+        embed = discord.Embed(
+            description=f":x: {str(error)}", color=discord.Color.red()
+        )
         await ctx.channel.send(embed=embed)
     elif isinstance(error, PunishStaffError):
         await ctx.message.delete()
-        embed = discord.Embed(description=f":x: {str(error)}")
+        embed = discord.Embed(
+            description=f":x: {str(error)}", color=discord.Color.red()
+        )
         await ctx.channel.send(embed=embed)
     elif isinstance(error, AlreadyMuteError):
-        embed = discord.Embed(description=f":x: {str(error)}")
+        embed = discord.Embed(
+            description=f":x: {str(error)}", color=discord.Color.red()
+        )
         await ctx.channel.send(embed=embed)
     elif isinstance(error, UserAlreadyBannedError):
         await ctx.message.delete()
-        embed = discord.Embed(description=":x: Cet utilisateur est déjà banni.")
+        embed = discord.Embed(
+            description=":x: Cet utilisateur est déjà banni.", color=discord.Color.red()
+        )
         await ctx.channel.send(embed=embed)
     elif isinstance(error, UserNotBannedError):
         await ctx.message.delete()
-        embed = discord.Embed(description=f":x: {str(error)}")
+        embed = discord.Embed(
+            description=f":x: {str(error)}", color=discord.Color.red()
+        )
         await ctx.channel.send(embed=embed)
     elif isinstance(error, UnauthorizedError):
         embed = discord.Embed(
-            description=f":x: Vous n'êtes pas autorisé à utiliser {ctx.command.name}."
+            description=f":x: Vous n'êtes pas autorisé à utiliser {ctx.command.name}.",
+            color=discord.Color.red(),
         )
         embed.set_footer(
             text="Contactez un administrateur si vous pensez que c'est une erreur."

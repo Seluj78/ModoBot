@@ -219,7 +219,6 @@ import modobot.commands.warn  # noqa
 import modobot.commands.note  # noqa
 import modobot.commands.search  # noqa
 import modobot.commands.lock  # noqa
-import modobot.commands.info  # noqa
 import modobot.commands.mute  # noqa
 
 

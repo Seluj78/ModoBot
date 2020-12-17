@@ -38,7 +38,7 @@ TODO:
 - [x] Check channels perms for clear
 - [x] Add lots of logging
 - [x] Replace IDs with mentions in search and others
-- [ ] Merge `info` and `search`
+- [x] Merge `info` and `search`
 - [ ] Change all colors of embeds
 - [ ] pretty dates/add timeuntil
 - [ ] Add archive for clear/lock/unlock

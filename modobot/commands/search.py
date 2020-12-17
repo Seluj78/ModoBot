@@ -34,6 +34,12 @@ async def search(ctx, member: discord.Member):
         description=f":mag_right: **{str(member)}** (`{member.id}`)",
         color=discord.Color.blue(),
     )
+    top_role = member.top_role
+    user_joined = member.joined_at
+    embed.add_field(
+        name="Status de l'utilisateur",
+        value=f"Rejoins le {user_joined}\nGrade le plus haut : {top_role}",
+    )
     if notes:
         msg = """"""
         for note in notes:

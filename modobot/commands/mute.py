@@ -79,7 +79,7 @@ async def mute(
     logging.debug("Creating user mute embed")
     embed = discord.Embed(
         description=f":shushing_face: Vous avez été mute de `{ctx.guild.name}`.",
-        color=discord.Color.red(),
+        color=discord.Color.dark_purple(),
     )
     embed.add_field(name="Raison", value=reason)
     embed.add_field(
@@ -199,7 +199,7 @@ async def unmute(ctx, member: discord.Member):
     logging.debug("Creating channel unmute embed")
     embed = discord.Embed(
         description=f"`{str(member)}` (`{member.id}`) à été **unmute**.",
-        color=discord.Color.dark_purple(),
+        color=discord.Color.green(),
     )
     embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
     logging.debug("Sending channel unmute embed")

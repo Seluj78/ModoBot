@@ -13,7 +13,8 @@ async def send_archive(actionlog):
     channel = modobot_client.get_channel(int(ARCHIVE_CHANNEL_ID))
     logging.debug("Preparing embed")
     embed = discord.Embed(
-        title=f"**Case {str(actionlog.id)} | {str(actionlog.action).capitalize()} | {actionlog.user_name}**"
+        title=f"**Case {str(actionlog.id)} | {str(actionlog.action).capitalize()} | {actionlog.user_name}**",
+        color=discord.Color.magenta(),
     )
     embed.add_field(
         name="Membre",

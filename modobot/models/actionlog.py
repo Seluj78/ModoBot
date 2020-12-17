@@ -15,7 +15,6 @@ ACTION_TYPES = [
     ("search", "search"),
     ("lock", "lock"),
     ("unlock", "unlock"),
-    ("info", "info"),
     ("mute", "mute"),
     ("unmute", "unmute"),
 ]

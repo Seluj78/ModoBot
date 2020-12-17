@@ -87,7 +87,7 @@ async def unban(ctx, *, member_id: str):
     logging.debug("Creating channel unban embed")
     embed = discord.Embed(
         description=f":wave: `{member_id}` à été **pardonné** (unban).",
-        color=discord.Color.dark_gold(),
+        color=discord.Color.green(),
     )
     embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
     logging.debug("Sending channel unban emebed")
