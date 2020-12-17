@@ -11,8 +11,8 @@ TODO:
 - [x] `lock` locks a channel
 - [x] `unlock` unlocks a channel
 - [x] `info` Get info on the accounts (created, joined etc)
-- [ ] `mute` Mutes a user
-- [ ] `unmute` Unmutes a user
+- [x] `mute` Mutes a user
+- [x] `unmute` Unmutes a user
 - [x] Pretty help page
 - [x] Add action logs (log what action a moderator takes)
 - [x] Finer permissions and role handling
@@ -21,6 +21,7 @@ TODO:
 - [x] pretty embeds for all messages
 - [x] Tout mettre en français
 - [x] Add a admin interface on flask
+- [ ] When a user is muted remove all roles and put them back after
 - [ ] Add reports for unauthorized use of command
 - [ ] Only resp staff and above can warn/ban moderators
 - [ ] Cannot ban user above you
@@ -35,6 +36,9 @@ TODO:
 - [ ] Add more emojis
 - [ ] Add check to not do anything on the bot
 - [ ] Add task to check if members that were supposed to be unmuted during server downtime be unmuted
+- [ ] Flask search page
+- [ ] Dissalow double mutes
+
 V2:
 
 - [ ] `delnote` Deletes a note
