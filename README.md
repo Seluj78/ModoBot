@@ -21,6 +21,8 @@ TODO:
 - [x] pretty embeds for all messages
 - [x] Tout mettre en français
 - [x] Add a admin interface on flask
+- [x] Add task to check if members that were supposed to be unmuted during server downtime be unmuted
+- [ ] Dissalow double mutes
 - [ ] When a user is muted remove all roles and put them back after
 - [ ] Add reports for unauthorized use of command
 - [ ] Only resp staff and above can warn/ban moderators
@@ -35,9 +37,7 @@ TODO:
 - [ ] Check all possible errors
 - [ ] Add more emojis
 - [ ] Add check to not do anything on the bot
-- [ ] Add task to check if members that were supposed to be unmuted during server downtime be unmuted
 - [ ] Flask search page
-- [ ] Dissalow double mutes
 
 V2:
 

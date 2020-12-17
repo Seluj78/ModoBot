@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 from datetime import datetime
@@ -81,11 +82,10 @@ modo_db = peewee.MySQLDatabase(
     database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT
 )
 
-import asyncio
 
-
-async def unmute_user_after(usermute):
-    await asyncio.sleep((usermute.dt_unmute - datetime.now()).seconds)
+async def unmute_user_after(usermute, skip=False):
+    if not skip:
+        await asyncio.sleep((usermute.dt_unmute - datetime.now()).seconds)
 
     guild = modobot_client.get_guild(int(SERVER_ID))
 
@@ -136,13 +136,17 @@ async def on_ready():
                 except IntegrityError:
                     pass
     logging.info("All roles created")
-    logging.info("Resetting timers for muted members")
-    for usermute in UserMute.select().where(
-        (UserMute.is_unmuted == False)  # noqa
-        & (UserMute.dt_unmute > datetime_now_france())  # noqa
-    ):
-        modobot_client.loop.create_task(unmute_user_after(usermute))
+    logging.info("Checking timers for muted members")
+    for usermute in UserMute.select().where((UserMute.is_unmuted == False)):  # noqa
+        if not usermute.dt_unmute:
+            logging.info(f"Mute {usermute.id} doesn't have unmute time, skipping")
+            continue
         logging.info(f"Added reset mute for {usermute.id}")
+        modobot_client.loop.create_task(
+            unmute_user_after(
+                usermute, skip=True if usermute.dt_unmute < datetime.now() else False
+            )
+        )
 
 
 from modobot.models.userban import UserBan, UserBan_Admin
