@@ -6,6 +6,7 @@ from modobot import modobot_client
 from modobot.models.actionlog import ActionLog
 from modobot.models.usernote import UserNote
 from modobot.utils.archive import send_archive
+from modobot.utils.france_datetime import clean_format
 from modobot.utils.france_datetime import datetime_now_france
 
 
@@ -33,7 +34,7 @@ async def note(ctx, member: discord.Member, *, reason: str):
         color=discord.Color.blurple(),
     )
     embed.add_field(name="Note", value=reason)
-    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
+    embed.set_footer(text=f"Action effectuée le {clean_format(datetime_now_france())}")
     logging.debug("Sending embed")
     await ctx.channel.send(embed=embed)
     logging.debug("Sending note archive")

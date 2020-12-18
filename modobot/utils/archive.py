@@ -4,6 +4,7 @@ import discord
 
 from modobot import modobot_client
 from modobot.static import ARCHIVE_CHANNEL_ID
+from modobot.utils.france_datetime import clean_format
 from modobot.utils.france_datetime import datetime_now_france
 
 
@@ -33,6 +34,8 @@ async def send_archive(actionlog):
         embed.add_field(
             name="Raison", value=str(actionlog.comments).split("(jusqu'à ")[0]
         )
-    embed.set_footer(text=f"ID: {actionlog.user_id} • {datetime_now_france()}")
+    embed.set_footer(
+        text=f"ID: {actionlog.user_id} • {clean_format(datetime_now_france())}"
+    )
     logging.debug("Sending archive embed")
     await channel.send(embed=embed)

@@ -8,6 +8,7 @@ from modobot.models.actionlog import ActionLog
 from modobot.models.userwarn import UserWarn
 from modobot.utils.archive import send_archive
 from modobot.utils.converters import BaseMember
+from modobot.utils.france_datetime import clean_format
 from modobot.utils.france_datetime import datetime_now_france
 
 
@@ -44,7 +45,7 @@ async def warn(ctx, member: BaseMember, *, reason: str):
         color=discord.Color.orange(),
     )
     embed.add_field(name="Raison", value=reason)
-    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
+    embed.set_footer(text=f"Action effectuée le {clean_format(datetime_now_france())}")
     logging.debug("Sending warn channel embed")
     await ctx.channel.send(embed=embed)
     logging.debug("Sending warn archive")

@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
 import json
+import locale
 import logging
 import os
 from datetime import datetime
@@ -16,8 +17,11 @@ from peewee import DoesNotExist
 from peewee import IntegrityError
 from pretty_help import PrettyHelp
 
+from modobot.utils.france_datetime import clean_format
 from modobot.utils.france_datetime import datetime_now_france
 from modobot.utils.logging import setup_logging
+
+locale.setlocale(locale.LC_TIME, "fr_FR")
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")  # refers to application_top
 dotenv_path = os.path.join(ROOT, ".env")
@@ -140,7 +144,7 @@ async def unmute_user_after(usermute, skip=False):
         description=f":raised_hands: Vous avez été unmute de `{guild.name}`.",
         color=discord.Color.green(),
     )
-    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
+    embed.set_footer(text=f"Action effectuée le {clean_format(datetime_now_france())}")
     with contextlib.suppress(discord.Forbidden):
         logging.debug("Sending embed to user")
         await member.send(embed=embed)

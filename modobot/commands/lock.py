@@ -4,6 +4,7 @@ import discord
 
 from modobot import modobot_client
 from modobot.models.actionlog import ActionLog
+from modobot.utils.france_datetime import clean_format
 from modobot.utils.france_datetime import datetime_now_france
 
 
@@ -32,7 +33,7 @@ async def lock(ctx, channel: discord.TextChannel = None):
         description=f":no_entry: Canal `{channel}` **verrouillé**.",
         color=discord.Color.red(),
     )
-    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
+    embed.set_footer(text=f"Action effectuée le {clean_format(datetime_now_france())}")
     logging.debug("Sending lock embed")
     await ctx.channel.send(embed=embed)
 
@@ -62,6 +63,6 @@ async def unlock(ctx, channel: discord.TextChannel = None):
         description=f":arrow_forward: Canal `{channel}` **déverouillé**",
         color=discord.Color.green(),
     )
-    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
+    embed.set_footer(text=f"Action effectuée le {clean_format(datetime_now_france())}")
     logging.debug("Sending unlock embed")
     await ctx.channel.send(embed=embed)

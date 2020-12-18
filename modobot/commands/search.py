@@ -8,6 +8,7 @@ from modobot.models.userban import UserBan
 from modobot.models.usernote import UserNote
 from modobot.models.userwarn import UserWarn
 from modobot.utils.archive import send_archive
+from modobot.utils.france_datetime import clean_format
 from modobot.utils.france_datetime import datetime_now_france
 
 
@@ -62,7 +63,7 @@ async def search(ctx, member: discord.Member):
             else:
                 msg += "\n"
         embed.add_field(name="Bans", value=msg, inline=False)
-    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
+    embed.set_footer(text=f"Action effectuée le {clean_format(datetime_now_france())}")
 
     logging.debug("Sending search embed")
     await ctx.channel.send(embed=embed)

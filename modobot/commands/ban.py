@@ -10,6 +10,7 @@ from modobot.utils.archive import send_archive
 from modobot.utils.converters import BaseMember
 from modobot.utils.errors import UserAlreadyBannedError
 from modobot.utils.errors import UserNotBannedError
+from modobot.utils.france_datetime import clean_format
 from modobot.utils.france_datetime import datetime_now_france
 
 
@@ -27,7 +28,7 @@ async def ban(ctx, member: BaseMember, *, reason: str):
         color=discord.Color.red(),
     )
     embed.add_field(name="Raison", value=reason)
-    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
+    embed.set_footer(text=f"Action effectuée le {clean_format(datetime_now_france())}")
     with contextlib.suppress(discord.Forbidden):
         logging.debug("Sending user ban embed")
         await member.send(embed=embed)
@@ -54,7 +55,7 @@ async def ban(ctx, member: BaseMember, *, reason: str):
         color=discord.Color.red(),
     )
     embed.add_field(name="Raison", value=reason)
-    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
+    embed.set_footer(text=f"Action effectuée le {clean_format(datetime_now_france())}")
     logging.debug("Sending channel embed for ban")
     await ctx.channel.send(embed=embed)
     logging.debug("Sending ban archive")
@@ -89,7 +90,7 @@ async def unban(ctx, *, member_id: str):
         description=f":wave: `{member_id}` à été **pardonné** (unban).",
         color=discord.Color.green(),
     )
-    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
+    embed.set_footer(text=f"Action effectuée le {clean_format(datetime_now_france())}")
     logging.debug("Sending channel unban emebed")
     await ctx.channel.send(embed=embed)
     logging.debug("Sending unban archive")

@@ -39,7 +39,7 @@ TODO:
 - [x] Add lots of logging
 - [x] Replace IDs with mentions in search and others
 - [x] Merge `info` and `search`
-- [ ] Change all colors of embeds
+- [x] Change all colors of embeds
 - [ ] pretty dates/add timeuntil
 - [ ] Add archive for clear/lock/unlock
 

@@ -14,6 +14,7 @@ from modobot.utils.converters import BaseMember
 from modobot.utils.converters import TimeConverter
 from modobot.utils.errors import AlreadyMuteError
 from modobot.utils.errors import NotMutedError
+from modobot.utils.france_datetime import clean_format
 from modobot.utils.france_datetime import datetime_now_france
 
 
@@ -73,7 +74,7 @@ async def mute(
         user_name=str(member),
         user_id=member.id,
         action="mute",
-        comments=reason + f"(jusqu'à {dt_unmute})",
+        comments=reason + f"(jusqu'à {clean_format(dt_unmute)})",
     )
 
     logging.debug("Creating user mute embed")
@@ -83,9 +84,10 @@ async def mute(
     )
     embed.add_field(name="Raison", value=reason)
     embed.add_field(
-        name="Jusqu'à", value=dt_unmute if dt_unmute is not None else "Indéfiniment"
+        name="Jusqu'à",
+        value=clean_format(dt_unmute) if dt_unmute is not None else "Indéfiniment",
     )
-    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
+    embed.set_footer(text=f"Action effectuée le {clean_format(datetime_now_france())}")
     with contextlib.suppress(discord.Forbidden):
         logging.debug("Sending user mute embed")
         await member.send(embed=embed)
@@ -98,9 +100,9 @@ async def mute(
     embed.add_field(name="Raison", value=f"`{reason}`.")
     embed.add_field(
         name="Jusqu'à",
-        value=f"`{dt_unmute if dt_unmute is not None else 'Indéfiniment'}`.",
+        value=clean_format(dt_unmute) if dt_unmute is not None else "Indéfiniment",
     )
-    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
+    embed.set_footer(text=f"Action effectuée le {clean_format(datetime_now_france())}")
     logging.debug("Sending channel mute embed")
     await ctx.channel.send(embed=embed)
     logging.debug("Sending mute archive")
@@ -136,7 +138,9 @@ async def mute(
             description=f":raised_hands: Vous avez été **unmute** de `{ctx.guild.name}`.",
             color=discord.Color.green(),
         )
-        embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
+        embed.set_footer(
+            text=f"Action effectuée le {clean_format(datetime_now_france())}"
+        )
         with contextlib.suppress(discord.Forbidden):
             logging.debug("Sending user unmute embed")
             await member.send(embed=embed)
@@ -185,13 +189,12 @@ async def unmute(ctx, member: discord.Member):
         user_id=member.id,
         action="unmute",
     )
-
     logging.debug("Creating user unmute embed")
     embed = discord.Embed(
         description=f":raised_hands: Vous avez été **unmute** de `{ctx.guild.name}`.",
         color=discord.Color.green(),
     )
-    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
+    embed.set_footer(text=f"Action effectuée le {clean_format(datetime_now_france())}")
     with contextlib.suppress(discord.Forbidden):
         logging.debug("Sending user unmute embed")
         await member.send(embed=embed)
@@ -201,7 +204,7 @@ async def unmute(ctx, member: discord.Member):
         description=f"`{str(member)}` (`{member.id}`) à été **unmute**.",
         color=discord.Color.green(),
     )
-    embed.set_footer(text=f"Action effectuée le {datetime_now_france()}")
+    embed.set_footer(text=f"Action effectuée le {clean_format(datetime_now_france())}")
     logging.debug("Sending channel unmute embed")
     await ctx.channel.send(embed=embed)
     logging.debug("Sending unmute archive")
