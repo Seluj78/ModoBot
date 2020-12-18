@@ -31,6 +31,12 @@ class UnauthorizedError(commands.BadArgument):
         super().__init__(message)
 
 
+class UnauthorizedChannelError(commands.BadArgument):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(message)
+
+
 class PunishSelfError(commands.BadArgument):
     def __init__(self, message):
         self.message = message
@@ -118,6 +124,15 @@ async def on_command_error(ctx, error):
     elif isinstance(error, UnauthorizedError):
         embed = discord.Embed(
             description=f":x: Vous n'êtes pas autorisé à utiliser {ctx.command.name}.",
+            color=discord.Color.red(),
+        )
+        embed.set_footer(
+            text="Contactez un administrateur si vous pensez que c'est une erreur."
+        )
+        await ctx.channel.send(embed=embed)
+    elif isinstance(error, UnauthorizedChannelError):
+        embed = discord.Embed(
+            description=f":x: Vous n'êtes pas autorisé à utiliser {ctx.command.name} ici.",
             color=discord.Color.red(),
         )
         embed.set_footer(

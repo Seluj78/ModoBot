@@ -7,6 +7,7 @@ from modobot import modobot_client
 from modobot.models.roleperms import RolePerms
 from modobot.models.unautorized_report import UnauthorizedReport
 from modobot.static import COMMAND_CHANNEL_ID
+from modobot.utils.errors import UnauthorizedChannelError
 from modobot.utils.errors import UnauthorizedError
 
 
@@ -94,6 +95,8 @@ async def channel_check(ctx):
             command=ctx.command,
             type="channel",
         )
-        raise UnauthorizedError("Impossible d'utiliser cette commande dans ce canal")
+        raise UnauthorizedChannelError(
+            "Impossible d'utiliser cette commande dans ce canal"
+        )
     else:
         return True

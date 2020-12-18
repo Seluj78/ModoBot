@@ -40,7 +40,7 @@ TODO:
 - [x] Replace IDs with mentions in search and others
 - [x] Merge `info` and `search`
 - [x] Change all colors of embeds
-- [ ] pretty dates/add timeuntil
+- [x] pretty dates/add timeuntil
 - [ ] Add archive for clear/lock/unlock
 
 V2:
