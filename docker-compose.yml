@@ -1,0 +1,71 @@
+version: '3.3'
+
+services:
+  mysql:
+    container_name: mysql
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_USER: 'modobot'
+      MYSQL_PASSWORD: 'modobot'
+      MYSQL_ROOT_PASSWORD: selujroot
+      MYSQL_DATABASE: modobot
+    env_file:
+      - .env.docker
+    volumes:
+      - mysql:/var/lib/mysql
+    networks:
+      - mysql-net
+    healthcheck:
+      test: "/usr/bin/mysql --user=$DB_USER --password=$DB_PASSWORD --execute \"SHOW DATABASES;\""
+      interval: 3s
+      timeout: 1s
+      retries: 5
+
+  app:
+    container_name: app
+    restart: always
+    build:
+      context: .
+      dockerfile: app.Dockerfile
+    env_file:
+      - .env.docker
+    ports:
+      - "8080:5000"
+    volumes:
+      - app:/app
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    networks:
+      - mysql-net
+      - app-net
+
+  bot:
+    container_name: bot
+    restart: always
+    build:
+      context: .
+      dockerfile: bot.Dockerfile
+    env_file:
+      - .env.docker
+    depends_on:
+      - mysql
+      - app
+    links:
+      - mysql
+      - app
+    networks:
+      - mysql-net
+      - app-net
+      - bot-net
+
+networks:
+  mysql-net:
+  app-net:
+  bot-net:
+
+volumes:
+  mysql:
+  app:
