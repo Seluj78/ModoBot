@@ -37,7 +37,13 @@ async def ban(ctx, member: BaseMember, *, reason: str):
     await member.ban(reason=reason)
 
     logging.debug("Creating ban in database")
-    UserBan.create(banned_id=member.id, moderator_id=ctx.author.id, reason=reason)
+    UserBan.create(
+        banned_id=member.id,
+        banned_name=str(member),
+        moderator_id=ctx.author.id,
+        moderator_name=str(ctx.author),
+        reason=reason,
+    )
 
     logging.debug("Creating action log for ban")
     new_log = ActionLog.create(

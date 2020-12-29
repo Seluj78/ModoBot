@@ -10,8 +10,10 @@ from modobot.utils.france_datetime import datetime_now_france
 
 class UserWarn(BaseModel):
     warned_id = CharField(null=False)
+    warned_name = CharField(null=False)
     dt_warned = DateTimeField(default=datetime_now_france)
     moderator_id = CharField(null=False)
+    moderator_name = CharField(null=False)
     reason = CharField(null=False)
     is_unwarned = BooleanField(default=False)
     dt_unwarned = DateTimeField(null=True)

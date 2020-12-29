@@ -16,7 +16,13 @@ async def note(ctx, member: discord.Member, *, reason: str):
     await ctx.message.delete()
 
     logging.debug("Creating note in database")
-    UserNote.create(noted_id=member.id, moderator_id=ctx.author.id, reason=reason)
+    UserNote.create(
+        noted_id=member.id,
+        noted_name=str(member),
+        moderator_id=ctx.author.id,
+        moderator_name=str(ctx.author),
+        reason=reason,
+    )
 
     logging.debug("Creating action log for nnote")
     new_log = ActionLog.create(

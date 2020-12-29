@@ -61,7 +61,9 @@ async def mute(
     logging.debug("Creating mute in database")
     new_mute = UserMute.create(
         muted_id=member.id,
+        muted_name=str(member),
         moderator_id=ctx.author.id,
+        moderator_name=str(ctx.author),
         reason=reason,
         dt_unmute=dt_unmute,
         user_roles=json.dumps(user_roles),
@@ -74,7 +76,7 @@ async def mute(
         user_name=str(member),
         user_id=member.id,
         action="mute",
-        comments=reason + f"(jusqu'à {clean_format(dt_unmute)})",
+        comments=reason + f" (jusqu'à {clean_format(dt_unmute)})",
     )
 
     logging.debug("Creating user mute embed")

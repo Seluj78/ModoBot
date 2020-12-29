@@ -35,7 +35,7 @@ async def send_archive(actionlog):
             name="Raison", value=str(actionlog.comments).split("(jusqu'à ")[0]
         )
     embed.set_footer(
-        text=f":bust_in_silhouette: ID: {actionlog.user_id} • :clock1: {clean_format(datetime_now_france())}"
+        text=f"👤 ID: {actionlog.user_id} • 🕐 {clean_format(datetime_now_france())}"
     )
     logging.debug("Sending archive embed")
     await channel.send(embed=embed)

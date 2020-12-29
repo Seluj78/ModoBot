@@ -28,7 +28,13 @@ async def warn(ctx, member: BaseMember, *, reason: str):
         await member.send(embed=embed)
 
     logging.debug("Creating warn in DB")
-    UserWarn.create(warned_id=member.id, moderator_id=ctx.author.id, reason=reason)
+    UserWarn.create(
+        warned_id=member.id,
+        warned_name=str(member),
+        moderator_id=ctx.author.id,
+        moderator_name=str(ctx.author),
+        reason=reason,
+    )
     logging.debug("Creating warn action log")
     new_log = ActionLog.create(
         moderator_name=str(ctx.author),
