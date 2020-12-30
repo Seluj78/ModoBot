@@ -4,7 +4,6 @@ from peewee import BooleanField
 from peewee import CharField
 from peewee import DateTimeField
 from peewee import TextField
-from werkzeug.security import generate_password_hash
 
 from modobot.models import BaseModel
 from modobot.utils.france_datetime import datetime_now_france
@@ -54,17 +53,3 @@ class AdminUser_Admin(ModelView):
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.is_admin
-
-
-if not AdminUser.table_exists():
-    AdminUser.create_table()
-    try:
-        AdminUser.get_by_id(1)
-    except AdminUser.DoesNotExist:
-        AdminUser.create(
-            email="admin@admin.org",
-            username="admin",
-            password=generate_password_hash("password"),
-            dt_added=datetime_now_france(),
-            is_admin=True,
-        ).save()

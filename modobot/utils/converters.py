@@ -5,6 +5,7 @@ import re
 from discord.ext import commands
 
 from modobot import modobot_client
+from modobot.models.guildsettings import GuildSettings
 from modobot.models.roleperms import RolePerms
 from modobot.models.unautorized_report import UnauthorizedReport
 from modobot.utils.errors import IncorrectTimeError
@@ -45,6 +46,7 @@ class BaseMember(commands.Converter):
         member = await commands.MemberConverter().convert(
             ctx, member
         )  # gets a member object
+        guildsettings = GuildSettings.get(GuildSettings.guild_id == ctx.guild.id)
 
         if member.id == modobot_client.user.id:
             logging.debug("User tried to do action on bot")
@@ -53,14 +55,16 @@ class BaseMember(commands.Converter):
                 moderator_id=ctx.author.id,
                 command=ctx.command,
                 type="bot_action",
+                guild=guildsettings,
             )
             raise PunishBotError(
                 "Pourquoi me faire tant de mal, je ne suis qu'un bot :robot:"
             )
 
-        role_names = [role.name for role in member.roles]
-        for role in role_names:
-            member_roleperms = RolePerms.get_or_none(name=role)
+        for role in member.roles:
+            member_roleperms = RolePerms.get_or_none(
+                role_id=role.id, guild=guildsettings
+            )
             if member_roleperms:
                 break
 
@@ -68,9 +72,10 @@ class BaseMember(commands.Converter):
             logging.debug("Member is not staff or doesn't have perms, all good")
             return member
 
-        role_names = [role.name for role in ctx.author.roles]
-        for role in role_names:
-            author_roleperms = RolePerms.get_or_none(name=role)
+        for role in ctx.author.roles:
+            author_roleperms = RolePerms.get_or_none(
+                role_id=role.id, guild=guildsettings
+            )
             if author_roleperms:
                 break
 
@@ -84,5 +89,6 @@ class BaseMember(commands.Converter):
                 moderator_id=ctx.author.id,
                 command=ctx.command,
                 type="staff_action",
+                guild=guildsettings,
             )
             raise PunishStaffError("Vous ne pouvez pas punir un autre membre du staff")

@@ -3,8 +3,10 @@ from flask_login import current_user
 from peewee import BooleanField
 from peewee import CharField
 from peewee import DateTimeField
+from peewee import ForeignKeyField
 
 from modobot.models import BaseModel
+from modobot.models.guildsettings import GuildSettings
 from modobot.utils.france_datetime import datetime_now_france
 
 
@@ -17,6 +19,7 @@ class UserBan(BaseModel):
     reason = CharField(null=False)
     is_unbanned = BooleanField(default=False)
     dt_unbanned = DateTimeField(null=True)
+    guild = ForeignKeyField(GuildSettings, backref="userbans", unique=False)
 
 
 class UserBan_Admin(ModelView):

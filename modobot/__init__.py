@@ -14,7 +14,6 @@ from flask import Flask
 from flask_admin import Admin
 from flask_login import LoginManager
 from peewee import DoesNotExist
-from peewee import IntegrityError
 from pretty_help import PrettyHelp
 
 from modobot.utils.france_datetime import clean_format
@@ -54,7 +53,6 @@ from modobot.static import (
     DB_PASSWORD,
     DB_PORT,
     DB_HOST,
-    SERVER_NAME,
     FLASK_SECRET_KEY,
     SERVER_ID,
 )  # noqa
@@ -104,7 +102,7 @@ async def unmute_user_after(usermute, skip=False):
 
     logging.debug("Finding role Muted")
     for role in guild.roles:
-        if role.name == "Muted":
+        if role.id == usermute.guild.muted_role_id:
             break
     if not role:
         raise ValueError("Role 'Muted' not found")
@@ -117,7 +115,7 @@ async def unmute_user_after(usermute, skip=False):
     logging.debug(f"Getting last mute for member {member.id}")
     last_mute = (
         UserMute.select()
-        .where(UserMute.muted_id == member.id)
+        .where((UserMute.muted_id == member.id) & (UserMute.guild == usermute.guild.id))
         .order_by(UserMute.id.desc())
         .get()
     )
@@ -158,23 +156,8 @@ async def unmute_user_after(usermute, skip=False):
 @modobot_client.event
 async def on_ready():
     logging.info("We have logged in as {0.user}".format(modobot_client))
-    from modobot.models.roleperms import RolePerms
     from modobot.models.usermute import UserMute
 
-    logging.info("Setting all roles")
-    for guild in modobot_client.guilds:
-        if guild.name == SERVER_NAME:
-            for role in guild.roles:
-                if role.name == "@everyone":
-                    continue
-                try:
-                    RolePerms.create(name=role.name)
-                except IntegrityError:
-                    logging.debug(f"Role {role.name} already exists, skipping")
-                    pass
-                else:
-                    logging.debug(f"Added role {role.name}")
-    logging.info("All roles created")
     logging.info("Checking timers for muted members")
     for usermute in UserMute.select().where((UserMute.is_unmuted == False)):  # noqa
         if not usermute.dt_unmute:
@@ -186,8 +169,10 @@ async def on_ready():
                 usermute, skip=True if usermute.dt_unmute < datetime.now() else False
             )
         )
+    logging.info("Done checking timers")
 
 
+from modobot.models.guildsettings import GuildSettings, GuildSettings_Admin
 from modobot.models.userban import UserBan, UserBan_Admin
 from modobot.models.userwarn import UserWarn, UserWarn_Admin
 from modobot.models.usernote import UserNote, UserNote_Admin
@@ -201,6 +186,10 @@ from modobot.models.unautorized_report import (
 )
 
 logging.info("Creating tables")
+if not GuildSettings.table_exists():
+    GuildSettings.create_table()
+if not AdminUser.table_exists():
+    AdminUser.create_table()
 if not UserBan.table_exists():
     UserBan.create_table()
 if not UserWarn.table_exists():
@@ -215,6 +204,23 @@ if not UserMute.table_exists():
     UserMute.create_table()
 if not UnauthorizedReport.table_exists():
     UnauthorizedReport.create_table()
+
+
+from modobot.utils.guild_roles import set_guild_roles
+
+
+@modobot_client.event
+async def on_guild_join(guild):
+    logging.info("Joining a new guild")
+    if not GuildSettings.get_or_none(GuildSettings.guild_id == guild.id):
+        new_guildsettings = GuildSettings.create(
+            guild_name=guild.name,
+            guild_id=guild.id,
+            muted_role_id=0,
+            archive_channel_id=0,
+        )
+        await set_guild_roles(guild, new_guildsettings)
+
 
 logging.info("Registering commands")
 import modobot.utils.checks  # noqa
@@ -244,6 +250,7 @@ logging.info("Registering admin views")
 admin.add_view(AdminUser_Admin(AdminUser, name="Admins"))
 admin.add_view(RolePerms_Admin(RolePerms, name="Permissions"))
 admin.add_view(ActionLog_Admin(ActionLog, name="Log"))
+admin.add_view(GuildSettings_Admin(GuildSettings, name="Guilds settings"))
 admin.add_view(
     UnauthorizedReport_Admin(UnauthorizedReport, name="Unauthorized commands")
 )
@@ -253,3 +260,17 @@ admin.add_view(UserBan_Admin(UserBan, name="Bans", category="Actions"))
 admin.add_view(UserMute_Admin(UserMute, name="Mutes", category="Actions"))
 admin.add_view(NewAdminView(name="New Admin", endpoint="register_admin"))
 admin.add_view(ChangePasswordView(name="Change password", endpoint="change_password"))
+
+from werkzeug.security import generate_password_hash
+
+
+try:
+    AdminUser.get_by_id(1)
+except AdminUser.DoesNotExist:
+    AdminUser.create(
+        email="admin@admin.org",
+        username="admin",
+        password=generate_password_hash("password"),
+        dt_added=datetime_now_france(),
+        is_admin=True,
+    ).save()

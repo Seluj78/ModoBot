@@ -4,6 +4,7 @@ import discord
 
 from modobot import modobot_client
 from modobot.models.actionlog import ActionLog
+from modobot.models.guildsettings import GuildSettings
 from modobot.models.usernote import UserNote
 from modobot.utils.archive import send_archive
 from modobot.utils.france_datetime import clean_format
@@ -14,6 +15,7 @@ from modobot.utils.france_datetime import datetime_now_france
 async def note(ctx, member: discord.Member, *, reason: str):
     logging.debug("Deleting source message")
     await ctx.message.delete()
+    guildsettings = GuildSettings.get(GuildSettings.guild_id == ctx.guild.id)
 
     logging.debug("Creating note in database")
     UserNote.create(
@@ -22,6 +24,7 @@ async def note(ctx, member: discord.Member, *, reason: str):
         moderator_id=ctx.author.id,
         moderator_name=str(ctx.author),
         reason=reason,
+        guild=guildsettings,
     )
 
     logging.debug("Creating action log for nnote")
@@ -32,6 +35,7 @@ async def note(ctx, member: discord.Member, *, reason: str):
         user_id=member.id,
         action="note",
         comments=reason,
+        guild=guildsettings,
     )
 
     logging.debug("Creating embed")

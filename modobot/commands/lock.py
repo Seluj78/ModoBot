@@ -4,6 +4,7 @@ import discord
 
 from modobot import modobot_client
 from modobot.models.actionlog import ActionLog
+from modobot.models.guildsettings import GuildSettings
 from modobot.utils.france_datetime import clean_format
 from modobot.utils.france_datetime import datetime_now_france
 
@@ -12,6 +13,7 @@ from modobot.utils.france_datetime import datetime_now_france
 async def lock(ctx, channel: discord.TextChannel = None):
     logging.debug("Deleting source message")
     await ctx.message.delete()
+    guildsettings = GuildSettings.get(GuildSettings.guild_id == ctx.guild.id)
 
     channel = channel or ctx.channel
     logging.debug("Creating action log")
@@ -20,6 +22,7 @@ async def lock(ctx, channel: discord.TextChannel = None):
         moderator_id=ctx.author.id,
         action="lock",
         comments=f"Locked {str(channel)}",
+        guild=guildsettings,
     )
 
     overwrite = channel.overwrites_for(ctx.guild.default_role)
@@ -44,6 +47,7 @@ async def unlock(ctx, channel: discord.TextChannel = None):
     await ctx.message.delete()
 
     channel = channel or ctx.channel
+    guildsettings = GuildSettings.get(GuildSettings.guild_id == ctx.guild.id)
 
     logging.debug("Creating action log for unlock")
     ActionLog.create(
@@ -51,6 +55,7 @@ async def unlock(ctx, channel: discord.TextChannel = None):
         moderator_id=ctx.author.id,
         action="unlock",
         comments=f"Unlocked {str(channel)}",
+        guild=guildsettings,
     )
 
     overwrite = channel.overwrites_for(ctx.guild.default_role)

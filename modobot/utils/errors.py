@@ -116,7 +116,6 @@ async def on_command_error(ctx, error):
         )
         await ctx.channel.send(embed=embed)
     elif isinstance(error, UserNotBannedError):
-        await ctx.message.delete()
         embed = discord.Embed(
             description=f":x: {str(error)}", color=discord.Color.red()
         )
@@ -132,13 +131,13 @@ async def on_command_error(ctx, error):
         await ctx.channel.send(embed=embed)
     elif isinstance(error, UnauthorizedChannelError):
         embed = discord.Embed(
-            description=f":x: Vous n'êtes pas autorisé à utiliser {ctx.command.name} ici.",
+            description=f":x: Vous n'êtes pas autorisé à utiliser {ctx.command.name} dans {ctx.channel.name}.",
             color=discord.Color.red(),
         )
         embed.set_footer(
             text="Contactez un administrateur si vous pensez que c'est une erreur."
         )
-        await ctx.channel.send(embed=embed)
+        await ctx.author.send(embed=embed)
     elif isinstance(error, commands.CheckFailure):
         logging.warning(f"Check failed: {error}")
         await send_error_embed(ctx, f"Erreur de check: {error}", "Essayez a nouveau")

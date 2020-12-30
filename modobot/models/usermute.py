@@ -3,8 +3,10 @@ from flask_login import current_user
 from peewee import BooleanField
 from peewee import CharField
 from peewee import DateTimeField
+from peewee import ForeignKeyField
 
 from modobot.models import BaseModel
+from modobot.models.guildsettings import GuildSettings
 from modobot.utils.france_datetime import datetime_now_france
 
 
@@ -18,6 +20,7 @@ class UserMute(BaseModel):
     is_unmuted = BooleanField(default=False)
     dt_unmute = DateTimeField(null=True)
     user_roles = CharField(null=False)
+    guild = ForeignKeyField(GuildSettings, backref="usermutes", unique=False)
 
 
 class UserMute_Admin(ModelView):

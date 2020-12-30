@@ -4,6 +4,7 @@ import logging
 import discord
 
 from modobot import modobot_client
+from modobot.models.guildsettings import GuildSettings
 from modobot.models.roleperms import RolePerms
 from modobot.models.unautorized_report import UnauthorizedReport
 from modobot.static import COMMAND_CHANNEL_ID
@@ -14,9 +15,9 @@ from modobot.utils.errors import UnauthorizedError
 @modobot_client.check
 async def permissions_check(ctx):
     logging.debug(f"Checking permissions for {str(ctx.author)} for {ctx.command.name}")
-    role_names = [role.name for role in ctx.author.roles]
-    for role in role_names:
-        roleperms = RolePerms.get_or_none(name=role)
+    guildsettings = GuildSettings.get(GuildSettings.guild_id == ctx.guild.id)
+    for role in ctx.author.roles:
+        roleperms = RolePerms.get_or_none(role_id=role.id, guild=guildsettings)
         if roleperms:
             logging.debug(f"Found roleperm {roleperms.id}")
             break
@@ -28,6 +29,7 @@ async def permissions_check(ctx):
             moderator_id=ctx.author.id,
             command=ctx.command,
             type="permissions",
+            guild=guildsettings,
         )
         raise UnauthorizedError("Vous n'êtes pas authorisé à utiliser cette commande.")
     if not roleperms.is_staff:
@@ -38,6 +40,7 @@ async def permissions_check(ctx):
             moderator_id=ctx.author.id,
             command=ctx.command,
             type="permissions",
+            guild=guildsettings,
         )
         raise UnauthorizedError("Vous n'êtes pas authorisé à utiliser cette commande.")
     if ctx.command.name == "help":
@@ -54,6 +57,7 @@ async def permissions_check(ctx):
                 moderator_id=ctx.author.id,
                 command=ctx.command,
                 type="permissions",
+                guild=guildsettings,
             )
             with contextlib.suppress(discord.Forbidden):
                 await ctx.author.send(
@@ -64,6 +68,7 @@ async def permissions_check(ctx):
             moderator_id=ctx.author.id,
             command=ctx.command,
             type="permissions",
+            guild=guildsettings,
         )
         raise UnauthorizedError(
             f"Vous n'êtes pas autorisé à utiliser `{ctx.command.name}`"
@@ -77,8 +82,11 @@ async def channel_check(ctx):
     logging.debug(
         f"Checking if command {ctx.command.name} can be used in {ctx.channel.name}"
     )
-    if ctx.command.name == "clear":
-        logging.debug("Command is 'clear', allowing")
+    # TODO: Make this a guild setting
+    if ctx.command.name in ["clear", "lock", "unlock"]:
+        logging.debug(
+            f"Command is {ctx.command.name}, allowing to use in {ctx.channel.name}"
+        )
         return True
     if ctx.message.channel.id != int(COMMAND_CHANNEL_ID):
         logging.debug(
@@ -89,11 +97,13 @@ async def channel_check(ctx):
             await ctx.author.send(
                 f"La commande `{ctx.command.name}` ne peut pas être utilisée dans `{ctx.message.channel.name}`"
             )
+        guildsettings = GuildSettings.get(GuildSettings.guild_id == ctx.guild.id)
         UnauthorizedReport.create(
             moderator_name=str(ctx.author),
             moderator_id=ctx.author.id,
             command=ctx.command,
             type="channel",
+            guild=guildsettings,
         )
         raise UnauthorizedChannelError(
             "Impossible d'utiliser cette commande dans ce canal"

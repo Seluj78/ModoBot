@@ -2,8 +2,10 @@ from flask_admin.contrib.peewee import ModelView
 from flask_login import current_user
 from peewee import CharField
 from peewee import DateTimeField
+from peewee import ForeignKeyField
 
 from modobot.models import BaseModel
+from modobot.models.guildsettings import GuildSettings
 from modobot.utils.france_datetime import datetime_now_france
 
 
@@ -14,6 +16,7 @@ class UserNote(BaseModel):
     moderator_id = CharField(null=False)
     moderator_name = CharField(null=False)
     reason = CharField(null=False)
+    guild = ForeignKeyField(GuildSettings, backref="usernotes", unique=False)
 
 
 class UserNote_Admin(ModelView):

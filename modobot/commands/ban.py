@@ -5,6 +5,7 @@ import discord
 
 from modobot import modobot_client
 from modobot.models.actionlog import ActionLog
+from modobot.models.guildsettings import GuildSettings
 from modobot.models.userban import UserBan
 from modobot.utils.archive import send_archive
 from modobot.utils.converters import BaseMember
@@ -36,6 +37,8 @@ async def ban(ctx, member: BaseMember, *, reason: str):
     logging.debug("Banning member")
     await member.ban(reason=reason)
 
+    guildsettings = GuildSettings.get(GuildSettings.guild_id == ctx.guild.id)
+
     logging.debug("Creating ban in database")
     UserBan.create(
         banned_id=member.id,
@@ -43,6 +46,7 @@ async def ban(ctx, member: BaseMember, *, reason: str):
         moderator_id=ctx.author.id,
         moderator_name=str(ctx.author),
         reason=reason,
+        guild=guildsettings,
     )
 
     logging.debug("Creating action log for ban")
@@ -53,6 +57,7 @@ async def ban(ctx, member: BaseMember, *, reason: str):
         user_id=member.id,
         action="ban",
         comments=reason,
+        guild=guildsettings,
     )
 
     logging.debug("Creating channel embed for ban")
@@ -72,8 +77,11 @@ async def ban(ctx, member: BaseMember, *, reason: str):
 async def unban(ctx, *, member_id: str):
     logging.debug("Deleting source message")
     await ctx.message.delete()
+    guildsettings = GuildSettings.get(GuildSettings.guild_id == ctx.guild.id)
 
-    banned_user = UserBan.get_or_none(banned_id=member_id, is_unbanned=False)
+    banned_user = UserBan.get_or_none(
+        banned_id=member_id, is_unbanned=False, guild=guildsettings
+    )
     if not banned_user:
         logging.debug("User was not banned")
         raise UserNotBannedError(f"L'utilisateur {member_id} n'est pas banni.")
@@ -90,6 +98,7 @@ async def unban(ctx, *, member_id: str):
         moderator_id=ctx.author.id,
         user_id=member_id,
         action="unban",
+        guild=guildsettings,
     )
     logging.debug("Creating channel unban embed")
     embed = discord.Embed(

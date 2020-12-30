@@ -2,8 +2,10 @@ from flask_admin.contrib.peewee import ModelView
 from flask_login import current_user
 from peewee import CharField
 from peewee import DateTimeField
+from peewee import ForeignKeyField
 
 from modobot.models import BaseModel
+from modobot.models.guildsettings import GuildSettings
 from modobot.utils.france_datetime import datetime_now_france
 
 ACTION_TYPES = [
@@ -20,6 +22,7 @@ class UnauthorizedReport(BaseModel):
     command = CharField(null=False)
     dt_action = DateTimeField(default=datetime_now_france)
     type = CharField(null=False, choices=ACTION_TYPES)
+    guild = ForeignKeyField(GuildSettings, backref="unauthorizedreports", unique=False)
 
 
 class UnauthorizedReport_Admin(ModelView):

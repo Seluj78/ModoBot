@@ -2,8 +2,10 @@ from flask_admin.contrib.peewee import ModelView
 from flask_login import current_user
 from peewee import CharField
 from peewee import DateTimeField
+from peewee import ForeignKeyField
 
 from modobot.models import BaseModel
+from modobot.models.guildsettings import GuildSettings
 from modobot.utils.france_datetime import datetime_now_france
 
 ACTION_TYPES = [
@@ -28,6 +30,7 @@ class ActionLog(BaseModel):
     dt_action = DateTimeField(default=datetime_now_france)
     action = CharField(null=False, choices=ACTION_TYPES)
     comments = CharField()
+    guild = ForeignKeyField(GuildSettings, backref="actionlogs", unique=False)
 
 
 class ActionLog_Admin(ModelView):

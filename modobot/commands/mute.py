@@ -8,6 +8,7 @@ from discord.utils import sleep_until
 
 from modobot import modobot_client
 from modobot.models.actionlog import ActionLog
+from modobot.models.guildsettings import GuildSettings
 from modobot.models.usermute import UserMute
 from modobot.utils.archive import send_archive
 from modobot.utils.converters import BaseMember
@@ -28,11 +29,14 @@ async def mute(
 ):
     logging.debug("Deleting source message")
     await ctx.message.delete()
+    guildsettings = GuildSettings.get(GuildSettings.guild_id == ctx.guild.id)
 
     try:
         logging.debug("Trying to get if user is already muted")
         UserMute.select().where(
-            (UserMute.muted_id == member.id) & (UserMute.is_unmuted == False)  # noqa
+            (UserMute.muted_id == member.id)
+            & (UserMute.is_unmuted == False)  # noqa
+            & (UserMute.guild == guildsettings)  # noqa
         ).order_by(UserMute.id.desc()).get()
     except UserMute.DoesNotExist:
         pass
@@ -47,13 +51,10 @@ async def mute(
         user_roles.append(role.id)
         await member.remove_roles(role)
 
-    for role in ctx.guild.roles:
-        if role.name == "Muted":
-            break
-    if not role:
-        raise ValueError("Role 'Muted' not found")
+    muted_role = ctx.guild.get_role(guildsettings.muted_role_id)
+
     logging.debug("Adding role Muted")
-    await member.add_roles(role)
+    await member.add_roles(muted_role)
 
     if not reason:
         reason = "Pas de raison donnée"
@@ -67,6 +68,7 @@ async def mute(
         reason=reason,
         dt_unmute=dt_unmute,
         user_roles=json.dumps(user_roles),
+        guild=guildsettings,
     )
 
     logging.debug("Creating action log in mute")
@@ -76,7 +78,10 @@ async def mute(
         user_name=str(member),
         user_id=member.id,
         action="mute",
-        comments=reason + f" (jusqu'à {clean_format(dt_unmute)})",
+        comments=reason + f" (jusqu'à {clean_format(dt_unmute)})"
+        if dt_unmute
+        else reason,
+        guild=guildsettings,
     )
 
     logging.debug("Creating user mute embed")
@@ -133,6 +138,7 @@ async def mute(
             user_name=str(member),
             user_id=member.id,
             action="unmute",
+            guild=guildsettings,
         )
 
         logging.debug("Creating user embed for unmute")
@@ -154,18 +160,15 @@ async def mute(
 async def unmute(ctx, member: discord.Member):
     logging.debug("Deleting source message")
     await ctx.message.delete()
-    for role in ctx.guild.roles:
-        if role.name == "Muted":
-            break
-    if not role:
-        raise ValueError("Role 'Muted' not found")
+    guildsettings = GuildSettings.get(GuildSettings.guild_id == ctx.guild.id)
+    muted_role = ctx.guild.get_role(guildsettings.muted_role_id)
     logging.debug("Removing 'Muted' role")
-    await member.remove_roles(role)
+    await member.remove_roles(muted_role)
 
     logging.debug("Getting last mute for user")
     last_mute = (
         UserMute.select()
-        .where(UserMute.muted_id == member.id)
+        .where(((UserMute.muted_id == member.id) & (UserMute.guild == guildsettings)))
         .order_by(UserMute.id.desc())
         .get()
     )
@@ -190,6 +193,7 @@ async def unmute(ctx, member: discord.Member):
         user_name=str(member),
         user_id=member.id,
         action="unmute",
+        guild=guildsettings,
     )
     logging.debug("Creating user unmute embed")
     embed = discord.Embed(

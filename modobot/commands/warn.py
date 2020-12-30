@@ -5,6 +5,7 @@ import discord
 
 from modobot import modobot_client
 from modobot.models.actionlog import ActionLog
+from modobot.models.guildsettings import GuildSettings
 from modobot.models.userwarn import UserWarn
 from modobot.utils.archive import send_archive
 from modobot.utils.converters import BaseMember
@@ -27,6 +28,8 @@ async def warn(ctx, member: BaseMember, *, reason: str):
         logging.debug("Sending embed to warned used")
         await member.send(embed=embed)
 
+    guildsettings = GuildSettings.get(GuildSettings.guild_id == ctx.guild.id)
+
     logging.debug("Creating warn in DB")
     UserWarn.create(
         warned_id=member.id,
@@ -34,6 +37,7 @@ async def warn(ctx, member: BaseMember, *, reason: str):
         moderator_id=ctx.author.id,
         moderator_name=str(ctx.author),
         reason=reason,
+        guild=guildsettings,
     )
     logging.debug("Creating warn action log")
     new_log = ActionLog.create(
@@ -43,6 +47,7 @@ async def warn(ctx, member: BaseMember, *, reason: str):
         user_id=member.id,
         action="warn",
         comments=reason,
+        guild=guildsettings,
     )
 
     logging.debug("Creating warn channel embed")

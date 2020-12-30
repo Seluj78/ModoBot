@@ -4,6 +4,7 @@ import discord
 
 from modobot import modobot_client
 from modobot.models.actionlog import ActionLog
+from modobot.models.guildsettings import GuildSettings
 from modobot.models.userban import UserBan
 from modobot.models.usernote import UserNote
 from modobot.models.userwarn import UserWarn
@@ -16,6 +17,9 @@ from modobot.utils.france_datetime import datetime_now_france
 async def search(ctx, member: discord.Member):
     logging.debug("Deleting source message")
     await ctx.message.delete()
+
+    guildsettings = GuildSettings.get(GuildSettings.guild_id == ctx.guild.id)
+
     logging.debug("Creating action log for search")
     new_log = ActionLog.create(
         moderator_name=str(ctx.author),
@@ -24,6 +28,7 @@ async def search(ctx, member: discord.Member):
         user_id=member.id,
         action="search",
         comments=member.id,
+        guild=guildsettings,
     )
     logging.debug(f"Getting notes, warns, bans for userc {member.id}")
     notes = UserNote.select().where(UserNote.noted_id == member.id)
