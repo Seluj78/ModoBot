@@ -16,6 +16,7 @@ from modobot.forms.auth import ChangePasswordForm
 from modobot.forms.auth import LoginForm
 from modobot.forms.auth import RegistrationForm
 from modobot.models.adminuser import AdminUser
+from modobot.models.banappeal import BanAppeal
 from modobot.utils.france_datetime import datetime_now_france
 
 
@@ -96,4 +97,46 @@ class BanAppealsView(admin.BaseView):
     def banappeals_view(self):
         if not current_user.is_authenticated:
             return redirect(url_for("admin.index"))
-        return self.render("admin/ban_appeals.html")
+        banappeal_list = BanAppeal.select().where(
+            BanAppeal.is_resolved == False  # noqa
+        )
+        return self.render("admin/banappeal_list.html", banappeal_list=banappeal_list)
+
+    @expose("/accept/<appeal_id>", methods=["GET"])
+    def accept_appeal(self, appeal_id):
+        try:
+            appeal = (
+                BanAppeal.select()
+                .where(
+                    (BanAppeal.id == appeal_id)
+                    & (BanAppeal.is_resolved == False)  # noqa
+                )
+                .get()
+            )
+        except BanAppeal.DoesNotExist:
+            flash("Appeal non existant ou déjà résolu.")
+            return redirect(url_for("admin.index"))
+        appeal.is_resolved = True
+        appeal.result = "accepted"
+        appeal.save()
+        # TODO: Unban !!
+        return redirect(url_for("ban_appeals.banappeals_view"))
+
+    @expose("/refuse/<appeal_id>", methods=["GET"])
+    def refuse_appeal(self, appeal_id):
+        try:
+            appeal = (
+                BanAppeal.select()
+                .where(
+                    (BanAppeal.id == appeal_id)
+                    & (BanAppeal.is_resolved == False)  # noqa
+                )
+                .get()
+            )
+        except BanAppeal.DoesNotExist:
+            flash("Appeal non existant ou déjà résolu.")
+            return redirect(url_for("admin.index"))
+        appeal.is_resolved = True
+        appeal.result = "refused"
+        appeal.save()
+        return redirect(url_for("ban_appeals.banappeals_view"))

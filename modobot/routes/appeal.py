@@ -24,7 +24,20 @@ def appeal_ban(ban_id: int):
     existing_banappeal = BanAppeal.get_or_none(BanAppeal.ban == ban)
     if existing_banappeal:
         if existing_banappeal.is_resolved:
+            if existing_banappeal.result == "accepted":
+                return render_template(
+                    "banappeal/index.html",
+                    type="success",
+                    text="Votre appel à été accepté, vous êtes unban. https://discord.gg/amongusfr",
+                )
+            else:
+                return render_template(
+                    "banappeal/index.html",
+                    type="danger",
+                    text="Votre appel à été refusé.",
+                )
             # DISPLAY RESOLUTION STATUS
+            # TODO : add refresh every 5 seconds
             pass
         else:
             return render_template(

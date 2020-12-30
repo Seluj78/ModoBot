@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Untitled</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+</head>
+
+<style>
+    #example {
+        margin-bottom: 0;
+    }
+
+    #example {
+        margin-bottom: 0;
+    }
+
+    .btn {
+        margin: 0px 10px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<body>
+<div>
+    <div class="container">
+
+        <div class="row" style="margin-top: 18px;">
+            <div class="col-md-4">
+                <h3 class="text-nowrap text-center" style="width: 343px;">Liste des appels de bans en attente</h3>
+            </div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                <a class="btn btn-primary" href="{{url_for('admin.index')}}">Retour a l'acceuil</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12"><table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nom du membre</th>
+                    <th>Identifiant du membre</th>
+                    <th>Non du modérateur</th>
+                    <th>Identifiant du modérateur</th>
+                    <th>Raison du ban</th>
+                    <th>Date du ban</th>
+                    <th>Raison de l'appel du ban</th>
+                    <th>Date de L'appel</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for ban_appeal in banappeal_list %}
+                    <tr>
+                        <td>{{ ban_appeal.id }}</td>
+                        <td>{{ ban_appeal.ban.banned_name }}</td>
+                        <td>{{ ban_appeal.ban.banned_id }}</td>
+                        <td>{{ ban_appeal.ban.moderator_name }}</td>
+                        <td>{{ ban_appeal.ban.moderator_id }}</td>
+                        <td>{{ ban_appeal.ban.reason }}</td>
+                        <td>{{ ban_appeal.ban.dt_banned }}</td>
+                        <td>{{ ban_appeal.appeal_reason }}</td>
+                        <td>{{ ban_appeal.dt_requested }}</td>
+                        <td>
+                            <a class="btn btn-success" href="javascript:alert_accept{{ ban_appeal.id }}();" data-toggle="tooltip" data-placement="top" title="Accepter l'appel et deban la personne."><i class="fas fa-check d-xl-flex justify-content-xl-center align-items-xl-center"></i></a>
+                            <a class="btn btn-warning" href="{{url_for('admin.index')}}" data-toggle="tooltip" data-placement="top" title="Mettre une raison sur votre décision."><i class="fas fa-arrow-right d-xl-flex justify-content-xl-center align-items-xl-center"></i></a>
+                            <a class="btn btn-danger" href="javascript:alert_refuse{{ ban_appeal.id }}();" data-toggle="tooltip" data-placement="top" title="Refuser l'appel."><i class="fas fa-stop-circle d-xl-flex justify-content-xl-center align-items-xl-center"></i></a>
+                        </td>
+                    </tr>
+                    <script type="text/javascript">
+                        function alert_accept{{ ban_appeal.id }}() {
+                            var answer = confirm ("Vous êtes sur le point de valider l'appel de {{ ban_appeal.ban.banned_name }}. Si vous continuez, il sera unban et aucune raison ne sera donnée.")
+                            if (answer)
+                                window.location='{{ url_for("ban_appeals.accept_appeal", appeal_id=ban_appeal.id) }};'
+                        }
+                    </script>
+                    <script type="text/javascript">
+                        function alert_refuse{{ ban_appeal.id }}() {
+                            var answer = confirm ("Vous êtes sur le point de refuser l'appel de {{ ban_appeal.ban.banned_name }}. Si vous continuez, l'appel sera refusé sans retour possible et aucune raison ne sera donnée.")
+                            if (answer)
+                                window.location='{{ url_for("ban_appeals.refuse_appeal", appeal_id=ban_appeal.id) }};'
+                        }
+                    </script>
+                {% endfor %}
+                </tbody>
+            </table></div>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
