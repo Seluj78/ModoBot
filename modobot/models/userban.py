@@ -26,5 +26,17 @@ class UserBan_Admin(ModelView):
     model_class = UserBan
     column_default_sort = ("dt_banned", True)
 
+    @property
+    def can_edit(self):
+        return current_user.is_admin
+
+    @property
+    def can_create(self):
+        return current_user.is_admin
+
+    @property
+    def can_delete(self):
+        return current_user.is_admin
+
     def is_accessible(self):
         return current_user.is_authenticated and current_user.is_admin

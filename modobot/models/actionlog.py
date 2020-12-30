@@ -36,9 +36,18 @@ class ActionLog(BaseModel):
 class ActionLog_Admin(ModelView):
     model_class = ActionLog
     column_default_sort = ("dt_action", True)
-    can_create = False
-    can_edit = False
-    can_delete = False
+
+    @property
+    def can_edit(self):
+        return current_user.is_admin
+
+    @property
+    def can_create(self):
+        return current_user.is_admin
+
+    @property
+    def can_delete(self):
+        return current_user.is_admin
 
     def is_accessible(self):
         return current_user.is_authenticated

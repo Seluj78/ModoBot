@@ -51,5 +51,17 @@ class AdminUser(BaseModel):
 class AdminUser_Admin(ModelView):
     model_class = AdminUser
 
+    @property
+    def can_edit(self):
+        return current_user.is_admin
+
+    @property
+    def can_create(self):
+        return current_user.is_admin
+
+    @property
+    def can_delete(self):
+        return current_user.is_admin
+
     def is_accessible(self):
         return current_user.is_authenticated and current_user.is_admin

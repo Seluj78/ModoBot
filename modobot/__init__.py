@@ -247,14 +247,24 @@ admin = Admin(
 
 # Registers the views for each table
 logging.info("Registering admin views")
-admin.add_view(AdminUser_Admin(AdminUser, name="Admins"))
-admin.add_view(RolePerms_Admin(RolePerms, name="Permissions"))
-admin.add_view(ActionLog_Admin(ActionLog, name="Log"))
-admin.add_view(GuildSettings_Admin(GuildSettings, name="Guilds settings"))
+admin.add_view(AdminUser_Admin(AdminUser, name="Admins", category="Administration"))
 admin.add_view(
-    UnauthorizedReport_Admin(UnauthorizedReport, name="Unauthorized commands")
+    RolePerms_Admin(RolePerms, name="Permissions", category="Administration")
 )
-admin.add_view(UserWarn_Admin(UserWarn, name="Avertissements", category="Actions"))
+admin.add_view(
+    GuildSettings_Admin(
+        GuildSettings, name="Guilds settings", category="Administration"
+    )
+)
+admin.add_view(
+    UnauthorizedReport_Admin(
+        UnauthorizedReport, name="Unauthorized commands", category="Administration"
+    )
+)
+admin.add_view(ActionLog_Admin(ActionLog, name="Historique des commandes"))
+admin.add_view(
+    UserWarn_Admin(UserWarn, name="Avertissements", category="Logs commandes")
+)
 admin.add_view(UserNote_Admin(UserNote, name="Notes", category="Actions"))
 admin.add_view(UserBan_Admin(UserBan, name="Bans", category="Actions"))
 admin.add_view(UserMute_Admin(UserMute, name="Mutes", category="Actions"))

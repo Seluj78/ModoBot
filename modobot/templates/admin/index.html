@@ -6,36 +6,39 @@
     <div>
         {% if current_user.is_authenticated %}
         <h1>Among Us France Discord Admin</h1>
-        <p class="lead">
-            Bienvenue dans le backoffice de discord.gg/amongusfr. Vous avez accès aux tables.<br>
-            Ne touchez à rien si vous ne savez pas ce que vous faites.
-        </p>
+        <div><br></div>
+        <div><br></div>
 
         <!-- https://getbootstrap.com/docs/4.0/components/button-group/ -->
 
         <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
             <div class="btn-group" role="group" aria-label="First group">
-                <button type="button" class="btn btn-primary" href="#">XXX</button>
+                <a class="btn btn-primary" href="{{ url_for('actionlog.index_view') }}">Historique des commandes</a>
             </div>
             <div class="btn-group" role="group" aria-label="First group">
-                <button type="button" class="btn btn-primary" href="#">XXX</button>
-            </div>
-            <div class="btn-group" role="group" aria-label="First group">
-                <button type="button" class="btn btn-primary" href="#">XXX</button>
+                <a class="btn btn-primary" href="{{url_for('admin.logout_view')}}">Se déconnecter</a>
             </div>
         </div>
         <div><br></div>
+        <div><br></div>
+        {% if current_user.is_admin %}
+        <p class="text-lg-center h1">Accès administrateur</p>
+        <div><br></div>
         <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
             <div class="btn-group" role="group" aria-label="First group">
-                <button type="button" class="btn btn-primary" href="#">XXX</button>
+                <a class="btn btn-primary" href="{{ url_for('roleperms.index_view') }}">Permissions des rôles</a>
             </div>
             <div class="btn-group" role="group" aria-label="First group">
-                <button type="button" class="btn btn-primary" href="#">XXX</button>
+                <a class="btn btn-primary" href="{{ url_for('unauthorizedreport.index_view') }}">Log des actions interdites</a>
             </div>
             <div class="btn-group" role="group" aria-label="First group">
-                <a class="btn btn-primary" href="{{url_for('admin.logout_view')}}">Logout</a>
+                <a class="btn btn-primary" href="{{ url_for('guildsettings.index_view') }}">Paramètres des guildes</a>
+            </div>
+            <div class="btn-group" role="group" aria-label="First group">
+                <a class="btn btn-primary" href="{{ url_for('adminuser.index_view') }}">Utilisateurs Admins</a>
             </div>
         </div>
+        {% endif %}
 
         {% else %}
         <form method="POST" action="">
