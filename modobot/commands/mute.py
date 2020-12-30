@@ -119,7 +119,7 @@ async def mute(
         logging.debug(f"Sleeping until {dt_unmute}")
         await sleep_until(dt_unmute)
         logging.debug("Removing role 'Muted'")
-        await member.remove_roles(role)
+        await member.remove_roles(muted_role)
         logging.debug("Adding roles back")
         for role_id in user_roles:
             role = ctx.guild.get_role(role_id)

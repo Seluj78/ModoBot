@@ -34,10 +34,7 @@ REQUIRED_ENV_VARS = [
     "DB_PASSWORD",
     "DB_NAME",
     "BOT_TOKEN",
-    "SERVER_NAME",
     "FLASK_SECRET_KEY",
-    "SERVER_ID",
-    "ARCHIVE_CHANNEL_ID",
     "COMMAND_CHANNEL_ID",
 ]
 
@@ -54,7 +51,6 @@ from modobot.static import (
     DB_PORT,
     DB_HOST,
     FLASK_SECRET_KEY,
-    SERVER_ID,
 )  # noqa
 
 setup_logging()
@@ -98,19 +94,13 @@ async def unmute_user_after(usermute, skip=False):
         await asyncio.sleep((usermute.dt_unmute - datetime.now()).seconds)
 
     logging.debug("Getting guild from server id")
-    guild = modobot_client.get_guild(int(SERVER_ID))
+    guild = modobot_client.get_guild(usermute.guild.guild_id)
 
-    logging.debug("Finding role Muted")
-    for role in guild.roles:
-        if role.id == usermute.guild.muted_role_id:
-            break
-    if not role:
-        raise ValueError("Role 'Muted' not found")
-
+    muted_role = guild.get_role(usermute.guild.muted_role_id)
     logging.debug("Getting muted member")
     member = await guild.fetch_member(int(usermute.muted_id))
     logging.debug("Removing muted role")
-    await member.remove_roles(role)
+    await member.remove_roles(muted_role)
 
     logging.debug(f"Getting last mute for member {member.id}")
     last_mute = (
@@ -137,6 +127,7 @@ async def unmute_user_after(usermute, skip=False):
         user_name=str(member),
         user_id=member.id,
         action="unmute",
+        guild=usermute.guild,
     )
 
     embed = discord.Embed(
@@ -184,6 +175,7 @@ from modobot.models.unautorized_report import (
     UnauthorizedReport,
     UnauthorizedReport_Admin,
 )
+from modobot.models.banappeal import BanAppeal, BanAppeal_Admin
 
 logging.info("Creating tables")
 if not GuildSettings.table_exists():
@@ -202,6 +194,8 @@ if not RolePerms.table_exists():
     RolePerms.create_table()
 if not UserMute.table_exists():
     UserMute.create_table()
+if not BanAppeal.table_exists():
+    BanAppeal.create_table()
 if not UnauthorizedReport.table_exists():
     UnauthorizedReport.create_table()
 
@@ -233,7 +227,15 @@ import modobot.commands.lock  # noqa
 import modobot.commands.mute  # noqa
 
 
-from modobot.routes.admin import AdminIndexView, NewAdminView, ChangePasswordView
+from modobot.routes.admin import (
+    AdminIndexView,
+    NewAdminView,
+    ChangePasswordView,
+    BanAppealsView,
+)
+from modobot.routes.appeal import appeal_bp
+
+application.register_blueprint(appeal_bp)
 
 # Creates the Admin manager
 logging.info("Registering admin manager")
@@ -268,8 +270,12 @@ admin.add_view(
 admin.add_view(UserNote_Admin(UserNote, name="Notes", category="Actions"))
 admin.add_view(UserBan_Admin(UserBan, name="Bans", category="Actions"))
 admin.add_view(UserMute_Admin(UserMute, name="Mutes", category="Actions"))
-admin.add_view(NewAdminView(name="New Admin", endpoint="register_admin"))
-admin.add_view(ChangePasswordView(name="Change password", endpoint="change_password"))
+admin.add_view(NewAdminView(name="Nouvel Admin", endpoint="register_admin"))
+admin.add_view(
+    ChangePasswordView(name="Changer son mot de passe", endpoint="change_password")
+)
+admin.add_view(BanAppealsView(name="Appels de ban", endpoint="ban_appeals"))
+admin.add_view(BanAppeal_Admin(BanAppeal, name="Refus de bans", category="Actions"))
 
 from werkzeug.security import generate_password_hash
 

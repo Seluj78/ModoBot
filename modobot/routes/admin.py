@@ -89,3 +89,11 @@ class ChangePasswordView(admin.BaseView):
             current_user.save()
             return redirect(url_for("admin.index"))
         return self.render("admin/change_password.html", form=form)
+
+
+class BanAppealsView(admin.BaseView):
+    @expose("/", methods=["GET"])
+    def banappeals_view(self):
+        if not current_user.is_authenticated:
+            return redirect(url_for("admin.index"))
+        return self.render("admin/ban_appeals.html")

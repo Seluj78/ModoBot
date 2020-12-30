@@ -7,6 +7,7 @@ from modobot import modobot_client
 from modobot.models.actionlog import ActionLog
 from modobot.models.guildsettings import GuildSettings
 from modobot.models.userban import UserBan
+from modobot.static import SERVER_URL
 from modobot.utils.archive import send_archive
 from modobot.utils.converters import BaseMember
 from modobot.utils.errors import UserAlreadyBannedError
@@ -23,24 +24,10 @@ async def ban(ctx, member: BaseMember, *, reason: str):
         logging.warning("User is already banned")
         raise UserAlreadyBannedError(f"L'utilisateur {str(member)} est déjà banni.")
 
-    logging.debug("Creating user ban embed")
-    embed = discord.Embed(
-        description=f":skull_crossbones: Vous avez été **banni** de `{ctx.guild.name}`.",
-        color=discord.Color.red(),
-    )
-    embed.add_field(name="Raison", value=reason)
-    embed.set_footer(text=f"Action effectuée le {clean_format(datetime_now_france())}")
-    with contextlib.suppress(discord.Forbidden):
-        logging.debug("Sending user ban embed")
-        await member.send(embed=embed)
-
-    logging.debug("Banning member")
-    await member.ban(reason=reason)
-
     guildsettings = GuildSettings.get(GuildSettings.guild_id == ctx.guild.id)
 
     logging.debug("Creating ban in database")
-    UserBan.create(
+    new_ban = UserBan.create(
         banned_id=member.id,
         banned_name=str(member),
         moderator_id=ctx.author.id,
@@ -48,6 +35,24 @@ async def ban(ctx, member: BaseMember, *, reason: str):
         reason=reason,
         guild=guildsettings,
     )
+
+    logging.debug("Creating user ban embed")
+    embed = discord.Embed(
+        description=f":skull_crossbones: Vous avez été **banni** de `{ctx.guild.name}`.",
+        color=discord.Color.red(),
+    )
+    embed.add_field(name="Raison", value=reason)
+    embed.add_field(
+        name="Vous souhaitez faire appel ?",
+        value=f"Clickez sur le lien et suivez les instructions\n{SERVER_URL + '/appeal/' + str(new_ban.id)}",
+    )
+    embed.set_footer(text=f"Action effectuée le {clean_format(datetime_now_france())}")
+    with contextlib.suppress(discord.Forbidden):
+        logging.debug("Sending user ban embed")
+        await member.send(embed=embed)
+
+    logging.debug("Banning member")
+    await member.ban(reason=reason)
 
     logging.debug("Creating action log for ban")
     new_log = ActionLog.create(

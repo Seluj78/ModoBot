@@ -1,7 +1,7 @@
+from flask_wtf import FlaskForm
 from peewee import DoesNotExist
 from werkzeug.security import check_password_hash
 from wtforms import fields
-from wtforms import form
 from wtforms import validators
 
 from modobot.models.adminuser import AdminUser
@@ -28,7 +28,7 @@ def validate_password(form, field):
 
 
 # Define login and registration forms (for flask-login)
-class LoginForm(form.Form):
+class LoginForm(FlaskForm):
     email_or_username = fields.StringField(
         "Email or Username",
         validators=[validators.DataRequired(), validate_email_or_username],
@@ -47,7 +47,7 @@ def validate_email_taken(form, field):
         raise validators.ValidationError("Email taken")
 
 
-class RegistrationForm(form.Form):
+class RegistrationForm(FlaskForm):
     username = fields.StringField(validators=[validators.DataRequired()])
     email = fields.StringField(
         validators=[
@@ -59,7 +59,7 @@ class RegistrationForm(form.Form):
     password = fields.PasswordField(validators=[validators.DataRequired()])
 
 
-class ChangePasswordForm(form.Form):
+class ChangePasswordForm(FlaskForm):
     old_password = fields.PasswordField(validators=[validators.DataRequired()])
     new_password = fields.PasswordField(validators=[validators.DataRequired()])
     new_password_confirmation = fields.PasswordField(
