@@ -1,69 +1,69 @@
 {% extends 'admin/master.html' %}
 {% block body %}
-{{ super() }}
-<div class="row-fluid">
-    {% include "_parts/flashes.jinja2" %}
-    <div>
-        {% if current_user.is_authenticated %}
-        <h1>Among Us France Discord Admin</h1>
-        <div><br></div>
-        <div><br></div>
+    {{ super() }}
+    <div class="row-fluid">
+        {% include "_parts/flashes.jinja2" %}
+        <div>
+            {% if current_user.is_authenticated %}
+                <h1>Among Us France Discord Admin</h1>
+                <div><br></div>
+                <div><br></div>
 
-        <!-- https://getbootstrap.com/docs/4.0/components/button-group/ -->
+                <!-- https://getbootstrap.com/docs/4.0/components/button-group/ -->
 
-        <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
-            <div class="btn-group" role="group" aria-label="First group">
-                <a class="btn btn-primary" href="{{ url_for('actionlog.index_view') }}">Historique des commandes</a>
-            </div>
-            <div class="btn-group" role="group" aria-label="First group">
-                <a class="btn btn-primary" href="{{url_for('ban_appeals.banappeals_view')}}">Voir les appels de bans</a>
-            </div>
-            <div class="btn-group" role="group" aria-label="First group">
-                <a class="btn btn-primary" href="{{url_for('admin.logout_view')}}">Se déconnecter</a>
-            </div>
-        </div>
-        <div><br></div>
-        <div><br></div>
-        {% if current_user.is_admin %}
-        <p class="text-lg-center h1">Accès administrateur</p>
-        <div><br></div>
-        <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
-            <div class="btn-group" role="group" aria-label="First group">
-                <a class="btn btn-primary" href="{{ url_for('roleperms.index_view') }}">Permissions des rôles</a>
-            </div>
-            <div class="btn-group" role="group" aria-label="First group">
-                <a class="btn btn-primary" href="{{ url_for('unauthorizedreport.index_view') }}">Log des actions interdites</a>
-            </div>
-            <div class="btn-group" role="group" aria-label="First group">
-                <a class="btn btn-primary" href="{{ url_for('guildsettings.index_view') }}">Paramètres des guildes</a>
-            </div>
-            <div class="btn-group" role="group" aria-label="First group">
-                <a class="btn btn-primary" href="{{ url_for('adminuser.index_view') }}">Utilisateurs Admins</a>
-            </div>
-        </div>
-        {% endif %}
-
-        {% else %}
-        <form method="POST" action="">
-            {{ form.hidden_tag() if form.hidden_tag }}
-            {% for f in form if f.type != 'CSRFTokenField' %}
-            <div>
-                {{ f.label }}
-                {{ f }}
-                {% if f.errors %}
-                <ul>
-                    {% for e in f.errors %}
-                    <li>{{ e }}</li>
-                    {% endfor %}
-                </ul>
+                <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-group" role="group" aria-label="First group">
+                        <a class="btn btn-primary" href="{{ url_for('actionlog.index_view') }}">Historique des commandes</a>
+                    </div>
+                    <div class="btn-group" role="group" aria-label="First group">
+                        <a class="btn btn-primary" href="{{url_for('ban_appeals.banappeals_view')}}">Voir les appels de bans</a>
+                    </div>
+                    <div class="btn-group" role="group" aria-label="First group">
+                        <a class="btn btn-primary" href="{{url_for('admin.logout_view')}}">Se déconnecter</a>
+                    </div>
+                </div>
+                <div><br></div>
+                <div><br></div>
+                {% if current_user.is_admin %}
+                    <p class="text-lg-center h1">Accès administrateur</p>
+                    <div><br></div>
+                    <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+                        <div class="btn-group" role="group" aria-label="First group">
+                            <a class="btn btn-primary" href="{{ url_for('roleperms.index_view') }}">Permissions des rôles</a>
+                        </div>
+                        <div class="btn-group" role="group" aria-label="First group">
+                            <a class="btn btn-primary" href="{{ url_for('unauthorizedreport.index_view') }}">Log des actions interdites</a>
+                        </div>
+                        <div class="btn-group" role="group" aria-label="First group">
+                            <a class="btn btn-primary" href="{{ url_for('guildsettings.index_view') }}">Paramètres des guildes</a>
+                        </div>
+                        <div class="btn-group" role="group" aria-label="First group">
+                            <a class="btn btn-primary" href="{{ url_for('adminuser.index_view') }}">Utilisateurs Admins</a>
+                        </div>
+                    </div>
                 {% endif %}
-            </div>
-            {% endfor %}
-            <button class="btn btn-success" type="submit">Submit</button>
-        </form>
-        {{ link | safe }}
-        {% endif %}
-    </div>
 
-</div>
+            {% else %}
+                <form method="POST" action="">
+                    {{ form.hidden_tag() if form.hidden_tag }}
+                    {% for f in form if f.type != 'CSRFTokenField' %}
+                        <div>
+                            {{ f.label }}
+                            {{ f }}
+                            {% if f.errors %}
+                                <ul>
+                                    {% for e in f.errors %}
+                                        <li>{{ e }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <button class="btn btn-success" type="submit">Submit</button>
+                </form>
+                {{ link | safe }}
+            {% endif %}
+        </div>
+
+    </div>
 {% endblock body %}
