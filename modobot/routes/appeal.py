@@ -28,7 +28,7 @@ def appeal_ban(ban_id: int):
                 return render_template(
                     "banappeal/index.html",
                     type="success",
-                    text="Votre appel à été accepté, vous êtes unban. https://discord.gg/amongusfr",
+                    text="Votre appel à été accepté, vous êtes unban. À tout de suite sur https://discord.gg/amongusfr",
                 )
             else:
                 return render_template(
@@ -36,9 +36,7 @@ def appeal_ban(ban_id: int):
                     type="danger",
                     text="Votre appel à été refusé.",
                 )
-            # DISPLAY RESOLUTION STATUS
-            # TODO : add refresh every 5 seconds
-            pass
+            # TODO: DISPLAY RESOLUTION STATUS (REASON)
         else:
             return render_template(
                 "banappeal/index.html",
