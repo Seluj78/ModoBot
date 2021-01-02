@@ -38,7 +38,7 @@ async def ban(ctx, member: BaseMember, *, reason: str):
 
     logging.debug("Creating user ban embed")
     embed = discord.Embed(
-        description=f":skull_crossbones: Vous avez été **banni** de `{ctx.guild.name}`.",
+        description=f"💀 Vous avez été **banni** de `{ctx.guild.name}`.",
         color=discord.Color.red(),
     )
     embed.add_field(name="Raison", value=reason)
@@ -67,7 +67,7 @@ async def ban(ctx, member: BaseMember, *, reason: str):
 
     logging.debug("Creating channel embed for ban")
     embed = discord.Embed(
-        description=f":skull_crossbones: `{str(member)}` (`{member.id}`) à été **banni**.",
+        description=f"💀 `{str(member)}` (`{member.id}`) à été **banni**.",
         color=discord.Color.red(),
     )
     embed.add_field(name="Raison", value=reason)
