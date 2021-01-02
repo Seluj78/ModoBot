@@ -12,15 +12,14 @@ async def send_archive(actionlog):
     logging.debug("Getting channel")
     channel = modobot_client.get_channel(actionlog.guild.archive_channel_id)
     logging.debug("Preparing embed")
+
+    member = actionlog.user_name if actionlog.action != "unban" else actionlog.user_id
+
     embed = discord.Embed(
-        title=f"**Case {str(actionlog.id)} | {str(actionlog.action).capitalize()} | {actionlog.user_name}**",
+        title=f"**Case {str(actionlog.id)} | {str(actionlog.action).capitalize()} | {member}**",
         color=discord.Color.magenta(),
     )
-    embed.add_field(
-        name="Membre",
-        value=actionlog.user_name if actionlog.action != "unban" else actionlog.user_id,
-        inline=True,
-    )
+    embed.add_field(name="Membre", value=member, inline=True)
     embed.add_field(name="Moderateur", value=actionlog.moderator_name, inline=True)
     if actionlog.action in ["ban", "warn", "note"]:
         embed.add_field(name="Raison", value=actionlog.comments, inline=True)
