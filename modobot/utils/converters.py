@@ -6,11 +6,13 @@ from discord.ext import commands
 
 from modobot import modobot_client
 from modobot.models.guildsettings import GuildSettings
+from modobot.models.rolecategory import RoleCategory
 from modobot.models.roleperms import RolePerms
 from modobot.models.unautorized_report import UnauthorizedReport
 from modobot.utils.errors import IncorrectTimeError
 from modobot.utils.errors import PunishBotError
 from modobot.utils.errors import PunishStaffError
+from modobot.utils.errors import RoleCatDoesntExist
 from modobot.utils.france_datetime import datetime_now_france
 
 
@@ -38,6 +40,29 @@ class TimeConverter(commands.Converter):
 
         dt_unmute = datetime_now_france() + delta
         return dt_unmute
+
+
+class RoleCategoryConverter(commands.Converter):
+    async def convert(self, ctx, argument):
+        guildsettings = GuildSettings.get(GuildSettings.guild_id == ctx.guild.id)
+        try:
+            argument = int(argument)
+        except ValueError:
+            try:
+                return RoleCategory.get(
+                    (RoleCategory.guild == guildsettings)
+                    & (RoleCategory.name == argument)
+                )
+            except RoleCategory.DoesNotExist:
+                raise RoleCatDoesntExist("Unknow name")
+        else:
+            try:
+                return RoleCategory.get(
+                    (RoleCategory.guild == guildsettings)
+                    & (RoleCategory.position == int(argument))
+                )
+            except RoleCategory.DoesNotExist:
+                raise RoleCatDoesntExist("Unknown position")
 
 
 class BaseMember(commands.Converter):

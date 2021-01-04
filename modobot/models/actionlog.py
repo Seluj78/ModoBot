@@ -19,6 +19,7 @@ ACTION_TYPES = [
     ("unlock", "unlock"),
     ("mute", "mute"),
     ("unmute", "unmute"),
+    ("addcat", "addcat"),
 ]
 
 

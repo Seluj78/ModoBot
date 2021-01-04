@@ -7,6 +7,24 @@ from modobot import modobot_client
 from modobot.utils.embeds import send_error_embed
 
 
+class RoleAlreadyInSameCat(commands.BadArgument):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(message)
+
+
+class RoleAlreadyInCat(commands.BadArgument):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(message)
+
+
+class RoleCatDoesntExist(commands.BadArgument):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(message)
+
+
 class UserAlreadyBannedError(commands.BadArgument):
     def __init__(self, message):
         self.message = message
@@ -65,6 +83,9 @@ class NotMutedError(commands.BadArgument):
     def __init__(self, message):
         self.message = message
         super().__init__(message)
+
+
+# TODO: Convert this big if forest to a dict
 
 
 @modobot_client.event
@@ -127,6 +148,24 @@ async def on_command_error(ctx, error):
         )
         embed.set_footer(
             text="Contactez un administrateur si vous pensez que c'est une erreur."
+        )
+        await ctx.channel.send(embed=embed)
+    elif isinstance(error, RoleCatDoesntExist):
+        embed = discord.Embed(
+            description=":x: La catégorie demandée n'existe pas.",
+            color=discord.Color.red(),
+        )
+        await ctx.channel.send(embed=embed)
+    elif isinstance(error, RoleAlreadyInCat):
+        embed = discord.Embed(
+            description=":x: Le rôle est déjà dans une catégorie.",
+            color=discord.Color.red(),
+        )
+        await ctx.channel.send(embed=embed)
+    elif isinstance(error, RoleAlreadyInSameCat):
+        embed = discord.Embed(
+            description=":x: Le rôle est déjà dans cette catégorie.",
+            color=discord.Color.red(),
         )
         await ctx.channel.send(embed=embed)
     elif isinstance(error, UnauthorizedChannelError):

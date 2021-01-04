@@ -78,7 +78,8 @@ def load_user(uid):
 
 
 logging.debug("Creating bot object")
-modobot_client = commands.Bot(command_prefix="%", help_command=PrettyHelp())
+# TODO: put prefix in guild settings ?
+modobot_client = commands.Bot(command_prefix="?", help_command=PrettyHelp())
 
 logging.debug("Connecting to database")
 modo_db = peewee.MySQLDatabase(
@@ -147,6 +148,16 @@ async def unmute_user_after(usermute, skip=False):
 
 @modobot_client.event
 async def on_ready():
+    logging.info("Checking guilds")
+    for guild in modobot_client.guilds:
+        if not GuildSettings.get_or_none(GuildSettings.guild_id == guild.id):
+            GuildSettings.create(
+                guild_name=guild.name,
+                guild_id=guild.id,
+                muted_role_id=0,
+                archive_channel_id=0,
+            )
+
     logging.info("We have logged in as {0.user}".format(modobot_client))
     from modobot.models.usermute import UserMute
 
@@ -172,6 +183,8 @@ from modobot.models.usermute import UserMute, UserMute_Admin
 from modobot.models.actionlog import ActionLog, ActionLog_Admin
 from modobot.models.roleperms import RolePerms, RolePerms_Admin
 from modobot.models.adminuser import AdminUser, AdminUser_Admin
+from modobot.models.rolecategory import RoleCategory, RoleCategory_Admin
+from modobot.models.role import Role, Role_Admin
 from modobot.models.unautorized_report import (
     UnauthorizedReport,
     UnauthorizedReport_Admin,
@@ -199,22 +212,22 @@ if not BanAppeal.table_exists():
     BanAppeal.create_table()
 if not UnauthorizedReport.table_exists():
     UnauthorizedReport.create_table()
-
-
-from modobot.utils.guild_roles import set_guild_roles
+if not RoleCategory.table_exists():
+    RoleCategory.create_table()
+if not Role.table_exists():
+    Role.create_table()
 
 
 @modobot_client.event
 async def on_guild_join(guild):
     logging.info("Joining a new guild")
     if not GuildSettings.get_or_none(GuildSettings.guild_id == guild.id):
-        new_guildsettings = GuildSettings.create(
+        GuildSettings.create(
             guild_name=guild.name,
             guild_id=guild.id,
             muted_role_id=0,
             archive_channel_id=0,
         )
-        await set_guild_roles(guild, new_guildsettings)
 
 
 logging.info("Registering commands")
@@ -226,6 +239,7 @@ import modobot.commands.note  # noqa
 import modobot.commands.search  # noqa
 import modobot.commands.lock  # noqa
 import modobot.commands.mute  # noqa
+import modobot.commands.perms  # noqa
 
 
 from modobot.routes.admin import (
@@ -277,6 +291,13 @@ admin.add_view(
 )
 admin.add_view(BanAppealsView(name="Appels de ban", endpoint="ban_appeals"))
 admin.add_view(BanAppeal_Admin(BanAppeal, name="Refus de bans", category="Actions"))
+admin.add_view(
+    RoleCategory_Admin(
+        RoleCategory, name="Catégorie de rôles", category="Administration"
+    )
+)
+admin.add_view(Role_Admin(Role, name="Rôles", category="Administration"))
+
 
 from werkzeug.security import generate_password_hash
 
