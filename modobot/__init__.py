@@ -78,7 +78,7 @@ def load_user(uid):
 
 
 logging.debug("Creating bot object")
-modobot_client = commands.Bot(command_prefix="?", help_command=PrettyHelp())
+modobot_client = commands.Bot(command_prefix="%", help_command=PrettyHelp())
 
 logging.debug("Connecting to database")
 modo_db = peewee.MySQLDatabase(
@@ -115,10 +115,11 @@ async def unmute_user_after(usermute, skip=False):
     last_mute.save()
 
     logging.debug("Restoring roles to user")
-    for role_id in json.loads(last_mute.user_roles):
-        role = guild.get_role(role_id)
-        logging.debug(f"Adding role {role.name}")
-        await member.add_roles(role)
+    if last_mute.user_roles != "/":
+        for role_id in json.loads(last_mute.user_roles):
+            role = guild.get_role(role_id)
+            logging.debug(f"Adding role {role.name}")
+            await member.add_roles(role)
 
     logging.debug("Creating action log for automatic unmute")
     new_log = ActionLog.create(

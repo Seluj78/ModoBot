@@ -6,11 +6,10 @@ from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.support.ui import Select
 
 from modobot.models.actionlog import ActionLog
+from modobot.models.guildsettings import GuildSettings
 from modobot.models.userban import UserBan
 from modobot.models.usermute import UserMute
 from modobot.models.userwarn import UserWarn
-
-# from modobot.models.usernote import UserNote
 
 
 firefox_binary = FirefoxBinary("/Applications/Firefox.app/Contents/MacOS/firefox")
@@ -45,26 +44,27 @@ if __name__ == "__main__":
     ).click()
     sleep(1)
     driver.find_element_by_xpath("/html/body/nav/nav/div[2]/div[2]/div/a[2]").click()
-    sleep(20)
-    driver.find_element_by_xpath(
-        "/html/body/div[2]/div/div[2]/div/div/div/div[2]/div/div[2]/div/div/div[5]/a"
-    ).click()
-    sleep(5)
-    driver.find_element_by_xpath(
-        "/html/body/div[2]/div[1]/div/div/div/div[1]/aside/div[3]/ul/li[8]/a"
-    ).click()
-    sleep(2)
-    driver.find_element_by_xpath(
-        "/html/body/div[2]/div[1]/div/div/div/div[2]/div[2]/div[1]/div/ul/li[2]/a"
-    ).click()
-    sleep(2)
+    sleep(15)
+    driver.get("https://dyno.gg/manage/720998487457529876/logs/moderation")
+    # driver.find_element_by_xpath(
+    #     "/html/body/div[2]/div/div[2]/div/div/div/div[2]/div/div[2]/div/div/div[1]/a"
+    # ).click()
+    # sleep(10)
+    # driver.find_element_by_xpath(
+    #     "/html/body/div[2]/div[1]/div/div/div/div[1]/aside/div[3]/ul/li[8]/a"
+    # ).click()
+    # sleep(2)
+    # driver.find_element_by_xpath(
+    #     "/html/body/div[2]/div[1]/div/div/div/div[2]/div[2]/div[1]/div/ul/li[2]/a"
+    # ).click()
+    # sleep(2)
 
     page_selector = Select(
         driver.find_element_by_xpath(
             "/html/body/div[2]/div[1]/div/div/div/div[2]/div[2]/div[2]/div/div[2]/div/div[2]/span[2]/select"
         )
     )
-    page_selector.select_by_value("5")
+    page_selector.select_by_value("100")
     while has_class(
         driver.find_element_by_xpath(
             "/html/body/div[2]/div[1]/div/div/div/div[2]/div[2]/div[2]/div/div[3]"
@@ -76,6 +76,7 @@ if __name__ == "__main__":
         "/html/body/div[2]/div[1]/div/div/div/div[2]/div[2]/div[2]/div/div[2]/div/div[3]/button"
     )
     while True:
+        sleep(2)
         table = driver.find_element_by_xpath(
             "/html/body/div[2]/div[1]/div/div/div/div[2]/div[2]/div[2]/div/div[1]/div[2]"
         )
@@ -88,6 +89,8 @@ if __name__ == "__main__":
             user_name = str(all_columns[4].text)
             moderator_name = str(all_columns[5].text)
             reason = str(all_columns[6].text)
+
+            guild = GuildSettings.get_by_id(1)
 
             try:
                 parsed_dt = parser.parse(date)
@@ -102,6 +105,7 @@ if __name__ == "__main__":
                 dt_action=parsed_dt,
                 action=action.lower(),
                 comments=reason,
+                guild=guild,
             )
 
             if action == "Warn":
@@ -112,26 +116,68 @@ if __name__ == "__main__":
                     moderator_name=moderator_name,
                     moderator_id="-1",
                     reason=reason,
+                    guild=guild,
                 )
-            elif action == "Mute":
-                last_mute = (
-                    UserMute.select()
-                    .where(UserMute.muted_id == user_id)
-                    .order_by(UserMute.id.desc())
-                    .get()
-                )
-                last_mute.dt_muted = parsed_dt
-                last_mute.save()
+            elif action == "Unban":
+                try:
+                    banned_user = (
+                        UserBan.select()
+                        .where(
+                            (UserBan.banned_id == user_id) & (UserBan.guild == guild)
+                        )
+                        .order_by(UserBan.id.desc())
+                        .get()
+                    )
+                    banned_user.dt_unbanned = parsed_dt
+                    banned_user.is_unbanned = True
+                    banned_user.save()
+                except UserBan.DoesNotExist:
+                    UserBan.create(
+                        banned_id=user_id,
+                        banned_name=user_name,
+                        dt_banned=parsed_dt,
+                        moderator_name=moderator_name,
+                        moderator_id="-1",
+                        reason=reason,
+                        is_unbanned=True,
+                        dt_unbanned=parsed_dt,
+                        guild=guild,
+                    )
             elif action == "Ban":
-                banned_user = (
-                    UserBan.select()
-                    .where(UserBan.banned_id == user_id)
-                    .order_by(UserBan.id.desc())
-                    .get()
+                UserBan.create(
+                    banned_id=user_id,
+                    banned_name=user_name,
+                    dt_banned=parsed_dt,
+                    moderator_name=moderator_name,
+                    moderator_id="-1",
+                    reason=reason,
+                    guild=guild,
                 )
-                banned_user.dt_banned = parsed_dt
-                banned_user.save()
             elif action == "Unmute":
+                try:
+                    last_mute = (
+                        UserMute.select()
+                        .where(
+                            (UserMute.muted_id == user_id) & (UserMute.guild == guild)
+                        )
+                        .order_by(UserMute.id.desc())
+                        .get()
+                    )
+                    last_mute.dt_unmute = parsed_dt
+                    last_mute.is_unmuted = True
+                    last_mute.save()
+                except UserMute.DoesNotExist:
+                    UserMute.create(
+                        muted_id=user_id,
+                        muted_name=user_name,
+                        dt_muted=parsed_dt,
+                        moderator_id="-1",
+                        moderator_name=moderator_name,
+                        reason=reason,
+                        user_roles="/",
+                        guild=guild,
+                    )
+            elif action == "Mute":
                 UserMute.create(
                     muted_id=user_id,
                     muted_name=user_name,
@@ -140,19 +186,7 @@ if __name__ == "__main__":
                     moderator_name=moderator_name,
                     reason=reason,
                     user_roles="/",
-                    is_unmuted=True,
-                    dt_unmute=parsed_dt,
-                )
-            elif action == "Unban":
-                UserBan.create(
-                    banned_id=user_id,
-                    banned_name=user_name,
-                    dt_banned=parsed_dt,
-                    dt_unbanned=parsed_dt,
-                    moderator_name=moderator_name,
-                    moderator_id="-1",
-                    reason=reason,
-                    is_unbanned=True,
+                    guild=guild,
                 )
             else:
                 print(f"Unknown action {action}")

@@ -41,7 +41,8 @@ TODO:
 - [x] Merge `info` and `search`
 - [x] Change all colors of embeds
 - [x] pretty dates/add timeuntil
-- [ ] Add archive for clear/lock/unlock
+- [x] Add archive for clear/lock/unlock
+- [ ] If user_roles for mute is `/` then send message to ask roles
 
 V2:
 
