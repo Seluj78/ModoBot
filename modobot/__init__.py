@@ -79,7 +79,9 @@ def load_user(uid):
 
 logging.debug("Creating bot object")
 # TODO: put prefix in guild settings ?
-modobot_client = commands.Bot(command_prefix="?", help_command=PrettyHelp())
+modobot_client = commands.Bot(
+    command_prefix="?", help_command=PrettyHelp(show_index=False)
+)
 
 logging.debug("Connecting to database")
 modo_db = peewee.MySQLDatabase(
