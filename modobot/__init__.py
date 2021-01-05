@@ -150,6 +150,14 @@ async def unmute_user_after(usermute, skip=False):
 
 @modobot_client.event
 async def on_ready():
+
+    logging.info("Setting bot status")
+    await modobot_client.change_presence(
+        activity=discord.Activity(
+            type=discord.ActivityType.watching, name="les commandes des modérateurs"
+        )
+    )
+
     logging.info("Checking guilds")
     for guild in modobot_client.guilds:
         if not GuildSettings.get_or_none(GuildSettings.guild_id == guild.id):
@@ -242,6 +250,7 @@ import modobot.commands.search  # noqa
 import modobot.commands.lock  # noqa
 import modobot.commands.mute  # noqa
 import modobot.commands.perms  # noqa
+import modobot.commands.stats  # noqa
 
 
 from modobot.routes.admin import (

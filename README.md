@@ -66,3 +66,4 @@ V2:
 - [ ] Move unmute task outside of __init__
 - [ ] Add auto unlock after a period of time
 - [ ] Find a way to optimize getting the role "Muted"
+- [ ] say command with embeds
