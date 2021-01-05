@@ -14,10 +14,8 @@ from modobot.utils.france_datetime import datetime_now_france
 
 
 # TODO: Only users with admin role can do it
-# TODO: delete role from rolecat
-# TODO: Delete rolecat
-# TODO: move rolecat
 # TODO: add logging
+# TODO: add action logs
 
 
 @modobot_client.command(
@@ -63,14 +61,14 @@ async def addrole(ctx: Context, role: discord.Role, rolecat: RoleCategoryConvert
         & (Role.category == rolecat)
     ):
         raise RoleAlreadyInSameCat("Role already in this category")
-    if Role.get_or_none(Role.guild == guildsettings):
+    if Role.get_or_none((Role.guild == guildsettings) & (Role.role_name == role.name)):
         raise RoleAlreadyInCat("Role already in a category")
 
     Role.create(
         role_id=role.id, role_name=role.name, guild=guildsettings, category=rolecat
     )
     embed = discord.Embed(
-        description=f":white_check_mark: Role {role.name} ajouté à la catégorie {rolecat.name}",
+        description=f":white_check_mark: Role <@&{role.id}> ajouté à la catégorie `{rolecat.name}`",
         color=discord.Color.green(),
     )
     embed.set_footer(text=f"Action effectuée le {clean_format(datetime_now_france())}")
@@ -99,4 +97,37 @@ async def listcats(ctx: Context):
             inline=False,
         )
     embed.set_footer(text=f"Action effectuée le {clean_format(datetime_now_france())}")
+    await ctx.channel.send(embed=embed)
+
+
+@modobot_client.command(brief="Supprime un rôle dans une catégorie")
+async def delrole(ctx: Context, role: discord.Role):
+    guildsettings = GuildSettings.get(GuildSettings.guild_id == ctx.guild.id)
+    role = Role.get_or_none(
+        (Role.guild == guildsettings) & (Role.role_name == role.name)
+    )
+    embed = discord.Embed(
+        description=f":x: Role <@&{role.role_id}> été supprimé de la catégorie `{role.category.name}`",
+        color=discord.Color.red(),
+    )
+    role.delete_instance()
+    embed.set_footer(text=f"Action effectuée le {clean_format(datetime_now_france())}")
+
+    await ctx.channel.send(embed=embed)
+
+
+@modobot_client.command(brief="Supprime une catégorie de rôles")
+async def delcat(ctx: Context, rolecat: RoleCategoryConverter):
+    embed = discord.Embed(
+        title=f":x: Catégorie `{rolecat.name}` supprimée", color=discord.Color.orange()
+    )
+
+    text = ""
+    for role in rolecat.roles:
+        text += f"<@&{role.role_id}>"
+        role.delete_instance()
+
+    embed.add_field(name="Rôle(s) supprimé(s)", value=text)
+
+    rolecat.delete_instance()
     await ctx.channel.send(embed=embed)
