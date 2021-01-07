@@ -6,8 +6,8 @@ from discord.ext import commands
 
 from modobot import modobot_client
 from modobot.models.guildsettings import GuildSettings
+from modobot.models.role import Role
 from modobot.models.rolecategory import RoleCategory
-from modobot.models.roleperms import RolePerms
 from modobot.models.unautorized_report import UnauthorizedReport
 from modobot.utils.errors import IncorrectTimeError
 from modobot.utils.errors import PunishBotError
@@ -87,24 +87,23 @@ class BaseMember(commands.Converter):
             )
 
         for role in member.roles:
-            member_roleperms = RolePerms.get_or_none(
-                role_id=role.id, guild=guildsettings
-            )
-            if member_roleperms:
+            member_role = Role.get_or_none(role_id=role.id, guild=guildsettings)
+            if member_role:
                 break
 
-        if not member_roleperms or not member_roleperms.is_staff:
+        if not member_role:
             logging.debug("Member is not staff or doesn't have perms, all good")
             return member
 
         for role in ctx.author.roles:
-            author_roleperms = RolePerms.get_or_none(
-                role_id=role.id, guild=guildsettings
-            )
-            if author_roleperms:
+            author_role = Role.get_or_none(role_id=role.id, guild=guildsettings)
+            if author_role:
                 break
 
-        if author_roleperms.can_punish_staff:
+        if not author_role:
+            raise ValueError("Error getting staff role")
+
+        if author_role.category.can_punish_staff:
             logging.debug("Author can punish staff, all good")
             return member
         else:

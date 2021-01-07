@@ -11,6 +11,7 @@ class GuildSettings(BaseModel):
     guild_id = UnsignedBitIntegerField(null=False, unique=True)
     muted_role_id = UnsignedBitIntegerField(null=False)
     archive_channel_id = UnsignedBitIntegerField(null=False)
+    master_user_id = UnsignedBitIntegerField(null=False)
 
 
 class GuildSettings_Admin(ModelView):

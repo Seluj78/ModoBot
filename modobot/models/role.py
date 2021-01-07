@@ -12,7 +12,7 @@ from modobot.models.rolecategory import RoleCategory
 class Role(BaseModel):
     role_name = CharField(null=False)
     role_id = UnsignedBitIntegerField(null=False)
-    guild = ForeignKeyField(GuildSettings, backref="roleperms", unique=False)
+    guild = ForeignKeyField(GuildSettings, backref="roles", unique=False)
     category = ForeignKeyField(RoleCategory, backref="roles", unique=False)
 
 

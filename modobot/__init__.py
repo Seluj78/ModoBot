@@ -191,7 +191,6 @@ from modobot.models.userwarn import UserWarn, UserWarn_Admin
 from modobot.models.usernote import UserNote, UserNote_Admin
 from modobot.models.usermute import UserMute, UserMute_Admin
 from modobot.models.actionlog import ActionLog, ActionLog_Admin
-from modobot.models.roleperms import RolePerms, RolePerms_Admin
 from modobot.models.adminuser import AdminUser, AdminUser_Admin
 from modobot.models.rolecategory import RoleCategory, RoleCategory_Admin
 from modobot.models.role import Role, Role_Admin
@@ -214,8 +213,6 @@ if not UserNote.table_exists():
     UserNote.create_table()
 if not ActionLog.table_exists():
     ActionLog.create_table()
-if not RolePerms.table_exists():
-    RolePerms.create_table()
 if not UserMute.table_exists():
     UserMute.create_table()
 if not BanAppeal.table_exists():
@@ -237,6 +234,7 @@ async def on_guild_join(guild):
             guild_id=guild.id,
             muted_role_id=0,
             archive_channel_id=0,
+            master_user_id=0,
         )
 
 
@@ -276,9 +274,6 @@ admin = Admin(
 # Registers the views for each table
 logging.info("Registering admin views")
 admin.add_view(AdminUser_Admin(AdminUser, name="Admins", category="Administration"))
-admin.add_view(
-    RolePerms_Admin(RolePerms, name="Permissions", category="Administration")
-)
 admin.add_view(
     GuildSettings_Admin(
         GuildSettings, name="Guilds settings", category="Administration"

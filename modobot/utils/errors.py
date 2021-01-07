@@ -85,6 +85,12 @@ class NotMutedError(commands.BadArgument):
         super().__init__(message)
 
 
+class UnfinishedBotConfigError(commands.BadArgument):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(message)
+
+
 error_dict = {
     NotMutedError: {
         "message": ":x: L'utilisateur n'est pas mute.",
@@ -148,6 +154,11 @@ error_dict = {
     },
     RoleCatDoesntExist: {
         "message": ":x: La catégorie demandée n'existe pas.",
+        "color": discord.Color.red(),
+        "send_to": "channel",
+    },
+    UnfinishedBotConfigError: {
+        "message": ":x: La configuration du bot n'est pas fini.",
         "color": discord.Color.red(),
         "send_to": "channel",
     },
