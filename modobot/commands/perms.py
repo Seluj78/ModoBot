@@ -13,9 +13,9 @@ from modobot.utils.france_datetime import clean_format
 from modobot.utils.france_datetime import datetime_now_france
 
 
-# TODO: Only users with admin role can do it
 # TODO: add logging
 # TODO: add action logs
+# TODO: ?editcat @Modérateur can_unban 0/1
 
 
 @modobot_client.command(
@@ -130,4 +130,52 @@ async def delcat(ctx: Context, rolecat: RoleCategoryConverter):
     embed.add_field(name="Rôle(s) supprimé(s)", value=text)
 
     rolecat.delete_instance()
+    await ctx.channel.send(embed=embed)
+
+
+@modobot_client.command(brief="Liste les permissions des catégories")
+async def listperms(ctx: Context):
+    guildsettings = GuildSettings.get(GuildSettings.guild_id == ctx.guild.id)
+
+    embed = discord.Embed(
+        title="Liste des permissions par catégorie", color=discord.Color.orange()
+    )
+
+    rolecat_list = RoleCategory.select().where(RoleCategory.guild == guildsettings)
+
+    sorted_list = sorted(rolecat_list, key=lambda i: i.position)
+
+    for rolecat in sorted_list:
+        role_list = ""
+        for role in rolecat.roles:
+            role_list += f"<@&{role.role_id}>\n"
+        perms = """__Permissions__
+        `ban`: {can_ban}
+        `unban`: {can_unban}
+        `warn`: {can_warn}
+        `note`: {can_note}
+        `search`: {can_search}
+        `clear`: {can_clear}
+        `lock`: {can_lock}
+        `unlock`: {can_unlock}
+        `mute`: {can_mute}
+        `unmute`: {can_unmute}
+        `punish_staff`: {can_punish_staff}
+        """.format(
+            can_ban=rolecat.can_ban,
+            can_unban=rolecat.can_unban,
+            can_warn=rolecat.can_warn,
+            can_note=rolecat.can_note,
+            can_search=rolecat.can_search,
+            can_clear=rolecat.can_clear,
+            can_lock=rolecat.can_lock,
+            can_unlock=rolecat.can_unlock,
+            can_mute=rolecat.can_mute,
+            can_unmute=rolecat.can_unmute,
+            can_punish_staff=rolecat.can_punish_staff,
+        )
+        embed.add_field(name=f"{rolecat.name}", value=role_list + perms, inline=False)
+
+    embed.set_footer(text=f"Action effectuée le {clean_format(datetime_now_france())}")
+
     await ctx.channel.send(embed=embed)
